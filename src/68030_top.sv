@@ -33,7 +33,7 @@ module top_level (
 	inout [31:0] IO_sdram_dq
 );
 
-wire cpu_cs = ~cpu_cs_n;
+wire cpu_in_cs = ~cpu_cs_n;
 wire cpu_rd = ~cpu_rd_n;
 wire cpu_uw = ~cpu_uw_n;
 wire cpu_lw = ~cpu_lw_n;
@@ -43,8 +43,32 @@ assign cpu_dtack_n = ~cpu_dtack;
 
 assign cpu_int_n = 1;
 
-assign cpu_data = (cpu_rd) ? cpu_sdram_data_out : 16'bz;  // Drive or release
+assign cpu_data = (cpu_rd_sync) ? cpu_data_out : 16'bz;  // Drive or release
+logic [20:0] cpu_addr_sync;
+logic [20:0] cpu_addr_sync2;
+logic [15:0] cpu_data_sync;
+logic [15:0] cpu_data_sync2;
+logic cpu_rd_sync, rd2;
 
+logic [3:0] inputSyncDelay; 
+logic cpu_in_sync,syn2;
+logic cpu_cs;
+always @(posedge sdram_clk)begin 
+    syn2 <= cpu_in_cs;
+    cpu_in_sync <= syn2;
+    
+    if(~cpu_in_sync) begin 
+        inputSyncDelay <= 3;
+        cpu_cs <= 0;
+    end else begin 
+        if(inputSyncDelay==0) begin 
+            cpu_cs <= 1;
+            cpu_addr_sync <= cpu_addr;
+            cpu_data_sync <= cpu_data;
+            cpu_rd_sync <= cpu_rd;
+        end else inputSyncDelay <= inputSyncDelay -1;
+    end
+end 
 
 //tmds and pixel clocks
 Gowin_rPLL tmds_clk_pll(
@@ -63,7 +87,7 @@ Gowin_rPLL2 sdr_clk_pll(
         .clkin(clk) //input clkin
     );
 
-wire [15:0] cpu_sdram_data_out;
+wire [15:0] cpu_data_out;
 wire [9:0] lineToFill;
 wire [7:0] fifo_burst_len;
 wire [31:0] fifo_sdram_data_out;
@@ -87,48 +111,48 @@ always @(posedge sdram_clk) begin
 
     end else begin
         if(controlRegRd) begin 
-            if (cpu_addr[7:0] == REG_BLT_START) creg_data_in[0] <= blitReady;
+            if (cpu_addr_sync[7:0] == REG_BLT_START) creg_data_in[0] <= blitReady;
         end else if (controlRegWr) begin 
-            case (cpu_addr[7:0]) 
-                REG_SCROLLY: scrolly <= cpu_data[15:8];
-                REG_SCROLLX: scrollx <= cpu_data[15:8];
+            case (cpu_addr_sync[7:0]) 
+                REG_SCROLLY: scrolly <= cpu_data_sync[15:8];
+                REG_SCROLLX: scrollx <= cpu_data_sync[15:8];
                 REG_PAL_IDX: begin 
-                    reds[cpu_data[15:8]] <= pal_r;
-                    greens[cpu_data[15:8]] <= pal_g;
-                    blues[cpu_data[15:8]] <= pal_b;
+                    reds[cpu_data_sync[15:8]] <= pal_r;
+                    greens[cpu_data_sync[15:8]] <= pal_g;
+                    blues[cpu_data_sync[15:8]] <= pal_b;
                 end
-                REG_PAL_R: pal_r <= cpu_data[15:8];
-                REG_PAL_G: pal_g <= cpu_data[15:8];
-                REG_PAL_B: pal_b <= cpu_data[15:8];
-                REG_SPR_XLOW: cursorX[7:0] <= cpu_data[15:8];
-                REG_SPR_XHIGH: cursorX[11:8] <= cpu_data[11:8];
-                REG_SPR_YLOW: cursorY[7:0] <= cpu_data[15:8];
-                REG_SPR_YHIGH: cursorY[11:8] <= cpu_data[11:8];
-                REG_SPR_IDX: spr_idx <= cpu_data[15:8];
+                REG_PAL_R: pal_r <= cpu_data_sync[15:8];
+                REG_PAL_G: pal_g <= cpu_data_sync[15:8];
+                REG_PAL_B: pal_b <= cpu_data_sync[15:8];
+                REG_SPR_XLOW: cursorX[7:0] <= cpu_data_sync[15:8];
+                REG_SPR_XHIGH: cursorX[11:8] <= cpu_data_sync[11:8];
+                REG_SPR_YLOW: cursorY[7:0] <= cpu_data_sync[15:8];
+                REG_SPR_YHIGH: cursorY[11:8] <= cpu_data_sync[11:8];
+                REG_SPR_IDX: spr_idx <= cpu_data_sync[15:8];
                 REG_SPR_DATA: begin 
-                    if(spr_idx[0]) cursorSprite[spr_idx[7:1]][7:0] <= cpu_data[15:8];
-                    else cursorSprite[spr_idx[7:1]][15:8] <= cpu_data[15:8];
+                    if(spr_idx[0]) cursorSprite[spr_idx[7:1]][7:0] <= cpu_data_sync[15:8];
+                    else cursorSprite[spr_idx[7:1]][15:8] <= cpu_data_sync[15:8];
                     spr_idx <= spr_idx + 8'd1;
                 end
-                REG_BLT_START: if (cpu_data[15:8] == 8'h3a)  blitStart <= 1;
-                REG_BLT_CMD: blt_cmd <= cpu_data[15:8];
-                REG_BLT_DESTX_LOW: blt_destx[7:0] <= cpu_data[15:8];
-                REG_BLT_DESTX_HIGH: blt_destx[15:8] <= cpu_data[15:8];
-                REG_BLT_DESTY_LOW: blt_desty[7:0] <= cpu_data[15:8];
-                REG_BLT_DESTY_HIGH: blt_desty[15:8] <= cpu_data[15:8];
-                REG_BLT_PAT_COL: blt_patt_col <= cpu_data[15:8];
+                REG_BLT_START: if (cpu_data_sync[15:8] == 8'h3a)  blitStart <= 1;
+                REG_BLT_CMD: blt_cmd <= cpu_data_sync[15:8];
+                REG_BLT_DESTX_LOW: blt_destx[7:0] <= cpu_data_sync[15:8];
+                REG_BLT_DESTX_HIGH: blt_destx[15:8] <= cpu_data_sync[15:8];
+                REG_BLT_DESTY_LOW: blt_desty[7:0] <= cpu_data_sync[15:8];
+                REG_BLT_DESTY_HIGH: blt_desty[15:8] <= cpu_data_sync[15:8];
+                REG_BLT_PAT_COL: blt_patt_col <= cpu_data_sync[15:8];
                 REG_BLT_PATT_DATA: begin 
                     blt_patt_idx <= blt_patt_idx + 1;
-                    if (blt_patt_idx[0]) pattern[blt_patt_idx[7:1]][7:0] <= cpu_data[15:8];
-                    else pattern[blt_patt_idx[7:1]][15:8] <= cpu_data[15:8];
+                    if (blt_patt_idx[0]) pattern[blt_patt_idx[7:1]][7:0] <= cpu_data_sync[15:8];
+                    else pattern[blt_patt_idx[7:1]][15:8] <= cpu_data_sync[15:8];
                 end
-                REG_BLT_PATT_IDX: blt_patt_idx <= cpu_data[15:8];
-                REG_BLT_WIDTH_LOW: blt_width[7:0] <= cpu_data[15:8];
-                REG_BLT_WIDTH_HIGH: blt_width[15:8] <= cpu_data[15:8];
-                REG_BLT_HEIGHT_LOW: blt_height[7:0] <= cpu_data[15:8];
-                REG_BLT_HEIGHT_HIGH: blt_height[15:8] <= cpu_data[15:8];
-                REG_BLT_PAT_BGCOL: blt_pat_bgcol <= cpu_data[15:8];
-                REG_BLT_PAT_MODE: blt_pat_mode <= cpu_data[15:8];
+                REG_BLT_PATT_IDX: blt_patt_idx <= cpu_data_sync[15:8];
+                REG_BLT_WIDTH_LOW: blt_width[7:0] <= cpu_data_sync[15:8];
+                REG_BLT_WIDTH_HIGH: blt_width[15:8] <= cpu_data_sync[15:8];
+                REG_BLT_HEIGHT_LOW: blt_height[7:0] <= cpu_data_sync[15:8];
+                REG_BLT_HEIGHT_HIGH: blt_height[15:8] <= cpu_data_sync[15:8];
+                REG_BLT_PAT_BGCOL: blt_pat_bgcol <= cpu_data_sync[15:8];
+                REG_BLT_PAT_MODE: blt_pat_mode <= cpu_data_sync[15:8];
             endcase
         end
     end
@@ -189,7 +213,6 @@ logic [7:0] blt_pat_mode;
 
 
 wire [7:0] cregAddr;
-wire [31:0] blitter_data_out;
 wire [31:0] blitter_data_in;
 wire [9:0] blitter_line;
 wire blitter_ack;
@@ -208,21 +231,20 @@ sdram_interface sdram_interface_inst(
     .x_scroll(scrollX_vsync),
 
     //cpu interface
-    .cpu_addr,
-    .cpu_sdram_data_in(cpu_data),
+    .cpu_addr(cpu_addr_sync),
+    .cpu_sdram_data_in(cpu_data_sync),
     .cpu_cs,
-    .cpu_rd,
+    .rd_raw(cpu_rd),
     .cpu_uw,
     .cpu_lw,
-    .cpu_sdram_data_out,
+    .cpu_data_out,
     .cpu_dtack,
-
+    .creg_busy(~blitReady),
     //control reg stuff
     .controlRegWr,
     .controlRegRd,
     .creg_data_in,
     // blitter interface 
-    .blitter_data_out,//output [31:0] blitter_data_out,
     .blitter_fifo_wr,
     .blitter_fifo_fill_req,
     .blitter_line,
@@ -230,6 +252,7 @@ sdram_interface sdram_interface_inst(
     .blitter_fifo_rd_en,
     .blitter_fifo_commit_req,
     .blitter_ack,
+    .blitReady,
 
     //sdram interface
     .O_sdram_clk,
@@ -249,22 +272,22 @@ blitter blitterinst (
     .blit_clk(sdram_clk),
     .sdram_clk(sdram_clk),
 
-    .dest_x(blt_destx),
-    .dest_y(blt_desty),
+    .i_dest_x(blt_destx),
+    .i_dest_y(blt_desty),
 
-    .width(blt_width),
-    .height(blt_height),
-    .pattern(pattern),
-    .fillData(blt_patt_col),
-    .fillBgCol(blt_pat_bgcol),
-    .patternFillMode(blt_pat_mode),
-    .blitterCmd(blt_cmd),
+    .i_width(blt_width),
+    .i_height(blt_height),
+    .i_pattern(pattern),
+    .i_fillData(blt_patt_col),
+    .i_fillBgCol(blt_pat_bgcol),
+    .i_patternFillMode(blt_pat_mode),
+    .i_blitterCmd(blt_cmd),
     .startBlit(blitStart),
     .blitReady(blitReady),
 
 
     .blitter_line,
-    .data_in(blitter_data_out),
+    .data_in(fifo_sdram_data_out),
     .blitterWr(blitter_fifo_wr),
     .fifoFillRequest(blitter_fifo_fill_req),
     .fifoFillAck(blitter_ack),

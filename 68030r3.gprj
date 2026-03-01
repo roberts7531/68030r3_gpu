@@ -22,6 +22,7 @@
         <File path="src/68030r3.sdc" type="file.sdc" enable="1"/>
         <File path="src/68030r3.rao" type="file.gao" enable="0"/>
         <File path="src/blitterdebug.rao" type="file.gao" enable="0"/>
+        <File path="src/reginterface.rao" type="file.gao" enable="1"/>
         <File path="src/videoDebug.rao" type="file.gao" enable="0"/>
     </FileList>
 </Project>

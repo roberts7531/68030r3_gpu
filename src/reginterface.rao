@@ -1,0 +1,279 @@
+<?xml version="1" encoding="UTF-8"?>
+<GAO_CONFIG>
+    <Version>3.0</Version>
+    <Mode>Standard</Mode>
+    <AoCore index="0" sample_clock="sdram_interface_inst/clk" trig_type="0" storage_depth="4096" window_num="4" capture_amount="1024" implementation="0" trigger_pos="0" module_name="top_level" force_trigger_by_falling_edge="false" capture_init_data_enabled="true">
+        <SignalList>
+            <Bus capture_enable="true" name="sdram_interface_inst/creg_sdram_data_out[15:0]">
+                <Signal>sdram_interface_inst/creg_sdram_data_out[15]</Signal>
+                <Signal>sdram_interface_inst/creg_sdram_data_out[14]</Signal>
+                <Signal>sdram_interface_inst/creg_sdram_data_out[13]</Signal>
+                <Signal>sdram_interface_inst/creg_sdram_data_out[12]</Signal>
+                <Signal>sdram_interface_inst/creg_sdram_data_out[11]</Signal>
+                <Signal>sdram_interface_inst/creg_sdram_data_out[10]</Signal>
+                <Signal>sdram_interface_inst/creg_sdram_data_out[9]</Signal>
+                <Signal>sdram_interface_inst/creg_sdram_data_out[8]</Signal>
+                <Signal>sdram_interface_inst/creg_sdram_data_out[7]</Signal>
+                <Signal>sdram_interface_inst/creg_sdram_data_out[6]</Signal>
+                <Signal>sdram_interface_inst/creg_sdram_data_out[5]</Signal>
+                <Signal>sdram_interface_inst/creg_sdram_data_out[4]</Signal>
+                <Signal>sdram_interface_inst/creg_sdram_data_out[3]</Signal>
+                <Signal>sdram_interface_inst/creg_sdram_data_out[2]</Signal>
+                <Signal>sdram_interface_inst/creg_sdram_data_out[1]</Signal>
+                <Signal>sdram_interface_inst/creg_sdram_data_out[0]</Signal>
+            </Bus>
+            <Bus capture_enable="true" name="sdram_interface_inst/creg_state[3:0]">
+                <Signal>sdram_interface_inst/creg_state[3]</Signal>
+                <Signal>sdram_interface_inst/creg_state[2]</Signal>
+                <Signal>sdram_interface_inst/creg_state[1]</Signal>
+                <Signal>sdram_interface_inst/creg_state[0]</Signal>
+            </Bus>
+            <Bus capture_enable="true" name="blt_width[15:0]">
+                <Signal>blt_width[15]</Signal>
+                <Signal>blt_width[14]</Signal>
+                <Signal>blt_width[13]</Signal>
+                <Signal>blt_width[12]</Signal>
+                <Signal>blt_width[11]</Signal>
+                <Signal>blt_width[10]</Signal>
+                <Signal>blt_width[9]</Signal>
+                <Signal>blt_width[8]</Signal>
+                <Signal>blt_width[7]</Signal>
+                <Signal>blt_width[6]</Signal>
+                <Signal>blt_width[5]</Signal>
+                <Signal>blt_width[4]</Signal>
+                <Signal>blt_width[3]</Signal>
+                <Signal>blt_width[2]</Signal>
+                <Signal>blt_width[1]</Signal>
+                <Signal>blt_width[0]</Signal>
+            </Bus>
+            <Bus capture_enable="true" name="blt_height[15:0]">
+                <Signal>blt_height[15]</Signal>
+                <Signal>blt_height[14]</Signal>
+                <Signal>blt_height[13]</Signal>
+                <Signal>blt_height[12]</Signal>
+                <Signal>blt_height[11]</Signal>
+                <Signal>blt_height[10]</Signal>
+                <Signal>blt_height[9]</Signal>
+                <Signal>blt_height[8]</Signal>
+                <Signal>blt_height[7]</Signal>
+                <Signal>blt_height[6]</Signal>
+                <Signal>blt_height[5]</Signal>
+                <Signal>blt_height[4]</Signal>
+                <Signal>blt_height[3]</Signal>
+                <Signal>blt_height[2]</Signal>
+                <Signal>blt_height[1]</Signal>
+                <Signal>blt_height[0]</Signal>
+            </Bus>
+            <Signal capture_enable="true">sdram_interface_inst/creg_busy</Signal>
+            <Signal capture_enable="true">sdram_interface_inst/creg_dtack</Signal>
+            <Signal capture_enable="true">cpu_dtack_n</Signal>
+            <Bus capture_enable="true" name="cpu_data_sync[15:0]">
+                <Signal>cpu_data_sync[15]</Signal>
+                <Signal>cpu_data_sync[14]</Signal>
+                <Signal>cpu_data_sync[13]</Signal>
+                <Signal>cpu_data_sync[12]</Signal>
+                <Signal>cpu_data_sync[11]</Signal>
+                <Signal>cpu_data_sync[10]</Signal>
+                <Signal>cpu_data_sync[9]</Signal>
+                <Signal>cpu_data_sync[8]</Signal>
+                <Signal>cpu_data_sync[7]</Signal>
+                <Signal>cpu_data_sync[6]</Signal>
+                <Signal>cpu_data_sync[5]</Signal>
+                <Signal>cpu_data_sync[4]</Signal>
+                <Signal>cpu_data_sync[3]</Signal>
+                <Signal>cpu_data_sync[2]</Signal>
+                <Signal>cpu_data_sync[1]</Signal>
+                <Signal>cpu_data_sync[0]</Signal>
+            </Bus>
+            <Signal capture_enable="true">sdram_interface_inst/reg_cs</Signal>
+            <Signal capture_enable="true">controlRegWr</Signal>
+            <Signal capture_enable="true">controlRegRd</Signal>
+            <Bus capture_enable="true" name="cpu_addr_sync[20:0]">
+                <Signal>cpu_addr_sync[20]</Signal>
+                <Signal>cpu_addr_sync[19]</Signal>
+                <Signal>cpu_addr_sync[18]</Signal>
+                <Signal>cpu_addr_sync[17]</Signal>
+                <Signal>cpu_addr_sync[16]</Signal>
+                <Signal>cpu_addr_sync[15]</Signal>
+                <Signal>cpu_addr_sync[14]</Signal>
+                <Signal>cpu_addr_sync[13]</Signal>
+                <Signal>cpu_addr_sync[12]</Signal>
+                <Signal>cpu_addr_sync[11]</Signal>
+                <Signal>cpu_addr_sync[10]</Signal>
+                <Signal>cpu_addr_sync[9]</Signal>
+                <Signal>cpu_addr_sync[8]</Signal>
+                <Signal>cpu_addr_sync[7]</Signal>
+                <Signal>cpu_addr_sync[6]</Signal>
+                <Signal>cpu_addr_sync[5]</Signal>
+                <Signal>cpu_addr_sync[4]</Signal>
+                <Signal>cpu_addr_sync[3]</Signal>
+                <Signal>cpu_addr_sync[2]</Signal>
+                <Signal>cpu_addr_sync[1]</Signal>
+                <Signal>cpu_addr_sync[0]</Signal>
+            </Bus>
+            <Bus capture_enable="true" name="blitterinst/currentBlitterState[3:0]">
+                <Signal>blitterinst/currentBlitterState[3]</Signal>
+                <Signal>blitterinst/currentBlitterState[2]</Signal>
+                <Signal>blitterinst/currentBlitterState[1]</Signal>
+                <Signal>blitterinst/currentBlitterState[0]</Signal>
+            </Bus>
+            <Bus capture_enable="true" name="blt_destx[15:0]">
+                <Signal>blt_destx[15]</Signal>
+                <Signal>blt_destx[14]</Signal>
+                <Signal>blt_destx[13]</Signal>
+                <Signal>blt_destx[12]</Signal>
+                <Signal>blt_destx[11]</Signal>
+                <Signal>blt_destx[10]</Signal>
+                <Signal>blt_destx[9]</Signal>
+                <Signal>blt_destx[8]</Signal>
+                <Signal>blt_destx[7]</Signal>
+                <Signal>blt_destx[6]</Signal>
+                <Signal>blt_destx[5]</Signal>
+                <Signal>blt_destx[4]</Signal>
+                <Signal>blt_destx[3]</Signal>
+                <Signal>blt_destx[2]</Signal>
+                <Signal>blt_destx[1]</Signal>
+                <Signal>blt_destx[0]</Signal>
+            </Bus>
+            <Bus capture_enable="true" name="blt_desty[15:0]">
+                <Signal>blt_desty[15]</Signal>
+                <Signal>blt_desty[14]</Signal>
+                <Signal>blt_desty[13]</Signal>
+                <Signal>blt_desty[12]</Signal>
+                <Signal>blt_desty[11]</Signal>
+                <Signal>blt_desty[10]</Signal>
+                <Signal>blt_desty[9]</Signal>
+                <Signal>blt_desty[8]</Signal>
+                <Signal>blt_desty[7]</Signal>
+                <Signal>blt_desty[6]</Signal>
+                <Signal>blt_desty[5]</Signal>
+                <Signal>blt_desty[4]</Signal>
+                <Signal>blt_desty[3]</Signal>
+                <Signal>blt_desty[2]</Signal>
+                <Signal>blt_desty[1]</Signal>
+                <Signal>blt_desty[0]</Signal>
+            </Bus>
+            <Bus capture_enable="true" name="cpu_data[15:0]">
+                <Signal>cpu_data[15]</Signal>
+                <Signal>cpu_data[14]</Signal>
+                <Signal>cpu_data[13]</Signal>
+                <Signal>cpu_data[12]</Signal>
+                <Signal>cpu_data[11]</Signal>
+                <Signal>cpu_data[10]</Signal>
+                <Signal>cpu_data[9]</Signal>
+                <Signal>cpu_data[8]</Signal>
+                <Signal>cpu_data[7]</Signal>
+                <Signal>cpu_data[6]</Signal>
+                <Signal>cpu_data[5]</Signal>
+                <Signal>cpu_data[4]</Signal>
+                <Signal>cpu_data[3]</Signal>
+                <Signal>cpu_data[2]</Signal>
+                <Signal>cpu_data[1]</Signal>
+                <Signal>cpu_data[0]</Signal>
+            </Bus>
+            <Signal capture_enable="true">cpu_cs</Signal>
+            <Signal capture_enable="true">sdram_interface_inst/sdram_cs</Signal>
+            <Signal capture_enable="true">blitterinst/blitReady</Signal>
+        </SignalList>
+        <Triggers>
+            <Trigger index="0">
+                <SignalList>
+                    <Signal>sdram_interface_inst/reg_cs</Signal>
+                    <Signal>controlRegWr</Signal>
+                    <Bus restorename="cpu_addr_sync[20:0]">
+                        <Signal>cpu_addr_sync[20]</Signal>
+                        <Signal>cpu_addr_sync[19]</Signal>
+                        <Signal>cpu_addr_sync[18]</Signal>
+                        <Signal>cpu_addr_sync[17]</Signal>
+                        <Signal>cpu_addr_sync[16]</Signal>
+                        <Signal>cpu_addr_sync[15]</Signal>
+                        <Signal>cpu_addr_sync[14]</Signal>
+                        <Signal>cpu_addr_sync[13]</Signal>
+                        <Signal>cpu_addr_sync[12]</Signal>
+                        <Signal>cpu_addr_sync[11]</Signal>
+                        <Signal>cpu_addr_sync[10]</Signal>
+                        <Signal>cpu_addr_sync[9]</Signal>
+                        <Signal>cpu_addr_sync[8]</Signal>
+                        <Signal>cpu_addr_sync[7]</Signal>
+                        <Signal>cpu_addr_sync[6]</Signal>
+                        <Signal>cpu_addr_sync[5]</Signal>
+                        <Signal>cpu_addr_sync[4]</Signal>
+                        <Signal>cpu_addr_sync[3]</Signal>
+                        <Signal>cpu_addr_sync[2]</Signal>
+                        <Signal>cpu_addr_sync[1]</Signal>
+                        <Signal>cpu_addr_sync[0]</Signal>
+                    </Bus>
+                </SignalList>
+            </Trigger>
+            <Trigger index="1">
+                <SignalList>
+                    <Bus restorename="cpu_addr_sync[20:0]">
+                        <Signal>cpu_addr_sync[20]</Signal>
+                        <Signal>cpu_addr_sync[19]</Signal>
+                        <Signal>cpu_addr_sync[18]</Signal>
+                        <Signal>cpu_addr_sync[17]</Signal>
+                        <Signal>cpu_addr_sync[16]</Signal>
+                        <Signal>cpu_addr_sync[15]</Signal>
+                        <Signal>cpu_addr_sync[14]</Signal>
+                        <Signal>cpu_addr_sync[13]</Signal>
+                        <Signal>cpu_addr_sync[12]</Signal>
+                        <Signal>cpu_addr_sync[11]</Signal>
+                        <Signal>cpu_addr_sync[10]</Signal>
+                        <Signal>cpu_addr_sync[9]</Signal>
+                        <Signal>cpu_addr_sync[8]</Signal>
+                        <Signal>cpu_addr_sync[7]</Signal>
+                        <Signal>cpu_addr_sync[6]</Signal>
+                        <Signal>cpu_addr_sync[5]</Signal>
+                        <Signal>cpu_addr_sync[4]</Signal>
+                        <Signal>cpu_addr_sync[3]</Signal>
+                        <Signal>cpu_addr_sync[2]</Signal>
+                        <Signal>cpu_addr_sync[1]</Signal>
+                        <Signal>cpu_addr_sync[0]</Signal>
+                    </Bus>
+                    <Signal>sdram_interface_inst/reg_cs</Signal>
+                    <Signal>controlRegRd</Signal>
+                </SignalList>
+            </Trigger>
+            <Trigger index="2">
+                <SignalList>
+                    <Signal>blitReady</Signal>
+                </SignalList>
+            </Trigger>
+            <Trigger index="3"/>
+            <Trigger index="4"/>
+            <Trigger index="5"/>
+            <Trigger index="6"/>
+            <Trigger index="7"/>
+            <Trigger index="8"/>
+            <Trigger index="9"/>
+            <Trigger index="10"/>
+            <Trigger index="11"/>
+            <Trigger index="12"/>
+            <Trigger index="13"/>
+            <Trigger index="14"/>
+            <Trigger index="15"/>
+        </Triggers>
+        <MatchUnits>
+            <MatchUnit index="0" enabled="1" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="11100000000000000001100" value1="00000000000000000000000" trigger="0"/>
+            <MatchUnit index="1" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="10000000000000000110011" value1="00000000000000000000000" trigger="1"/>
+            <MatchUnit index="2" enabled="0" match_type="1" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="0" value1="0" trigger="2"/>
+            <MatchUnit index="3" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="4" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="5" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="6" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="7" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="8" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="9" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="10" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="11" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="12" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="13" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="14" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="15" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+        </MatchUnits>
+        <Expressions type="Static">
+            <Expression>M0</Expression>
+        </Expressions>
+    </AoCore>
+    <GAO_ID>1101111100110001</GAO_ID>
+</GAO_CONFIG>
