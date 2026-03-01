@@ -1,0 +1,241 @@
+<?xml version="1" encoding="UTF-8"?>
+<GAO_CONFIG>
+    <Version>3.0</Version>
+    <Mode>Standard</Mode>
+    <AoCore index="0" sample_clock="blitterinst/blit_clk" trig_type="1" storage_depth="4096" window_num="1" capture_amount="4096" implementation="0" trigger_pos="0" module_name="top_level" force_trigger_by_falling_edge="false" capture_init_data_enabled="true">
+        <SignalList>
+            <Bus capture_enable="true" name="blitterinst/yPos[15:0]">
+                <Signal>blitterinst/yPos[15]</Signal>
+                <Signal>blitterinst/yPos[14]</Signal>
+                <Signal>blitterinst/yPos[13]</Signal>
+                <Signal>blitterinst/yPos[12]</Signal>
+                <Signal>blitterinst/yPos[11]</Signal>
+                <Signal>blitterinst/yPos[10]</Signal>
+                <Signal>blitterinst/yPos[9]</Signal>
+                <Signal>blitterinst/yPos[8]</Signal>
+                <Signal>blitterinst/yPos[7]</Signal>
+                <Signal>blitterinst/yPos[6]</Signal>
+                <Signal>blitterinst/yPos[5]</Signal>
+                <Signal>blitterinst/yPos[4]</Signal>
+                <Signal>blitterinst/yPos[3]</Signal>
+                <Signal>blitterinst/yPos[2]</Signal>
+                <Signal>blitterinst/yPos[1]</Signal>
+                <Signal>blitterinst/yPos[0]</Signal>
+            </Bus>
+            <Bus capture_enable="true" name="blitterinst/data_in[31:0]">
+                <Signal>blitterinst/data_in[31]</Signal>
+                <Signal>blitterinst/data_in[30]</Signal>
+                <Signal>blitterinst/data_in[29]</Signal>
+                <Signal>blitterinst/data_in[28]</Signal>
+                <Signal>blitterinst/data_in[27]</Signal>
+                <Signal>blitterinst/data_in[26]</Signal>
+                <Signal>blitterinst/data_in[25]</Signal>
+                <Signal>blitterinst/data_in[24]</Signal>
+                <Signal>blitterinst/data_in[23]</Signal>
+                <Signal>blitterinst/data_in[22]</Signal>
+                <Signal>blitterinst/data_in[21]</Signal>
+                <Signal>blitterinst/data_in[20]</Signal>
+                <Signal>blitterinst/data_in[19]</Signal>
+                <Signal>blitterinst/data_in[18]</Signal>
+                <Signal>blitterinst/data_in[17]</Signal>
+                <Signal>blitterinst/data_in[16]</Signal>
+                <Signal>blitterinst/data_in[15]</Signal>
+                <Signal>blitterinst/data_in[14]</Signal>
+                <Signal>blitterinst/data_in[13]</Signal>
+                <Signal>blitterinst/data_in[12]</Signal>
+                <Signal>blitterinst/data_in[11]</Signal>
+                <Signal>blitterinst/data_in[10]</Signal>
+                <Signal>blitterinst/data_in[9]</Signal>
+                <Signal>blitterinst/data_in[8]</Signal>
+                <Signal>blitterinst/data_in[7]</Signal>
+                <Signal>blitterinst/data_in[6]</Signal>
+                <Signal>blitterinst/data_in[5]</Signal>
+                <Signal>blitterinst/data_in[4]</Signal>
+                <Signal>blitterinst/data_in[3]</Signal>
+                <Signal>blitterinst/data_in[2]</Signal>
+                <Signal>blitterinst/data_in[1]</Signal>
+                <Signal>blitterinst/data_in[0]</Signal>
+            </Bus>
+            <Bus capture_enable="true" name="blitterinst/data_out[31:0]">
+                <Signal>blitterinst/data_out[31]</Signal>
+                <Signal>blitterinst/data_out[30]</Signal>
+                <Signal>blitterinst/data_out[29]</Signal>
+                <Signal>blitterinst/data_out[28]</Signal>
+                <Signal>blitterinst/data_out[27]</Signal>
+                <Signal>blitterinst/data_out[26]</Signal>
+                <Signal>blitterinst/data_out[25]</Signal>
+                <Signal>blitterinst/data_out[24]</Signal>
+                <Signal>blitterinst/data_out[23]</Signal>
+                <Signal>blitterinst/data_out[22]</Signal>
+                <Signal>blitterinst/data_out[21]</Signal>
+                <Signal>blitterinst/data_out[20]</Signal>
+                <Signal>blitterinst/data_out[19]</Signal>
+                <Signal>blitterinst/data_out[18]</Signal>
+                <Signal>blitterinst/data_out[17]</Signal>
+                <Signal>blitterinst/data_out[16]</Signal>
+                <Signal>blitterinst/data_out[15]</Signal>
+                <Signal>blitterinst/data_out[14]</Signal>
+                <Signal>blitterinst/data_out[13]</Signal>
+                <Signal>blitterinst/data_out[12]</Signal>
+                <Signal>blitterinst/data_out[11]</Signal>
+                <Signal>blitterinst/data_out[10]</Signal>
+                <Signal>blitterinst/data_out[9]</Signal>
+                <Signal>blitterinst/data_out[8]</Signal>
+                <Signal>blitterinst/data_out[7]</Signal>
+                <Signal>blitterinst/data_out[6]</Signal>
+                <Signal>blitterinst/data_out[5]</Signal>
+                <Signal>blitterinst/data_out[4]</Signal>
+                <Signal>blitterinst/data_out[3]</Signal>
+                <Signal>blitterinst/data_out[2]</Signal>
+                <Signal>blitterinst/data_out[1]</Signal>
+                <Signal>blitterinst/data_out[0]</Signal>
+            </Bus>
+            <Bus capture_enable="true" name="blitterinst/output1_data[7:0]">
+                <Signal>blitterinst/output1_data[7]</Signal>
+                <Signal>blitterinst/output1_data[6]</Signal>
+                <Signal>blitterinst/output1_data[5]</Signal>
+                <Signal>blitterinst/output1_data[4]</Signal>
+                <Signal>blitterinst/output1_data[3]</Signal>
+                <Signal>blitterinst/output1_data[2]</Signal>
+                <Signal>blitterinst/output1_data[1]</Signal>
+                <Signal>blitterinst/output1_data[0]</Signal>
+            </Bus>
+            <Signal capture_enable="true">blitterinst/blitterWr</Signal>
+            <Signal capture_enable="true">blitterinst/fifoFillRequest</Signal>
+            <Signal capture_enable="true">blitterinst/fifoFillAck</Signal>
+            <Signal capture_enable="true">blitterinst/blitterFifoRdEn</Signal>
+            <Signal capture_enable="true">blitterinst/outputFifoCommitRequest</Signal>
+            <Signal capture_enable="true">blitterinst/outputFifoCommitAck</Signal>
+            <Signal capture_enable="true">blitterinst/input1_rd_en</Signal>
+            <Signal capture_enable="true">blitterinst/output1_wr_en</Signal>
+            <Signal capture_enable="true">blitterinst/startBlit</Signal>
+            <Bus capture_enable="true" name="sdram_interface_inst/sdram_fsm_state[3:0]">
+                <Signal>sdram_interface_inst/sdram_fsm_state[3]</Signal>
+                <Signal>sdram_interface_inst/sdram_fsm_state[2]</Signal>
+                <Signal>sdram_interface_inst/sdram_fsm_state[1]</Signal>
+                <Signal>sdram_interface_inst/sdram_fsm_state[0]</Signal>
+            </Bus>
+            <Bus capture_enable="true" name="blitterinst/currentBlitterState[3:0]">
+                <Signal>blitterinst/currentBlitterState[3]</Signal>
+                <Signal>blitterinst/currentBlitterState[2]</Signal>
+                <Signal>blitterinst/currentBlitterState[1]</Signal>
+                <Signal>blitterinst/currentBlitterState[0]</Signal>
+            </Bus>
+            <Bus capture_enable="true" name="sdram_interface_inst/readDelay[4:0]">
+                <Signal>sdram_interface_inst/readDelay[4]</Signal>
+                <Signal>sdram_interface_inst/readDelay[3]</Signal>
+                <Signal>sdram_interface_inst/readDelay[2]</Signal>
+                <Signal>sdram_interface_inst/readDelay[1]</Signal>
+                <Signal>sdram_interface_inst/readDelay[0]</Signal>
+            </Bus>
+            <Bus capture_enable="true" name="sdram_interface_inst/burstLen[7:0]">
+                <Signal>sdram_interface_inst/burstLen[7]</Signal>
+                <Signal>sdram_interface_inst/burstLen[6]</Signal>
+                <Signal>sdram_interface_inst/burstLen[5]</Signal>
+                <Signal>sdram_interface_inst/burstLen[4]</Signal>
+                <Signal>sdram_interface_inst/burstLen[3]</Signal>
+                <Signal>sdram_interface_inst/burstLen[2]</Signal>
+                <Signal>sdram_interface_inst/burstLen[1]</Signal>
+                <Signal>sdram_interface_inst/burstLen[0]</Signal>
+            </Bus>
+            <Signal capture_enable="true">blitter_ack</Signal>
+            <Bus capture_enable="true" name="blitter_line[9:0]">
+                <Signal>blitter_line[9]</Signal>
+                <Signal>blitter_line[8]</Signal>
+                <Signal>blitter_line[7]</Signal>
+                <Signal>blitter_line[6]</Signal>
+                <Signal>blitter_line[5]</Signal>
+                <Signal>blitter_line[4]</Signal>
+                <Signal>blitter_line[3]</Signal>
+                <Signal>blitter_line[2]</Signal>
+                <Signal>blitter_line[1]</Signal>
+                <Signal>blitter_line[0]</Signal>
+            </Bus>
+            <Signal capture_enable="true">blitterinst/input_fifo1/Full</Signal>
+            <Signal capture_enable="true">blitterinst/input_fifo1/Empty</Signal>
+            <Signal capture_enable="true">blitterinst/output_fifo1/Empty</Signal>
+            <Signal capture_enable="true">blitterinst/output_fifo1/Full</Signal>
+            <Signal capture_enable="true">sdram_interface_inst/O_sdrc_cmd_ack</Signal>
+            <Bus capture_enable="true" name="sdram_interface_inst/sdrc2/O_sdrc_data[31:0]">
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[31]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[30]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[29]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[28]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[27]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[26]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[25]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[24]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[23]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[22]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[21]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[20]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[19]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[18]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[17]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[16]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[15]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[14]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[13]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[12]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[11]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[10]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[9]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[8]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[7]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[6]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[5]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[4]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[3]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[2]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[1]</Signal>
+                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[0]</Signal>
+            </Bus>
+            <Signal capture_enable="true">blitterinst/blitReady</Signal>
+        </SignalList>
+        <Triggers>
+            <Trigger index="0">
+                <SignalList>
+                    <Signal>blitterinst/rst</Signal>
+                    <Signal>blitterinst/blitRequested</Signal>
+                </SignalList>
+            </Trigger>
+            <Trigger index="1"/>
+            <Trigger index="2"/>
+            <Trigger index="3"/>
+            <Trigger index="4"/>
+            <Trigger index="5"/>
+            <Trigger index="6"/>
+            <Trigger index="7"/>
+            <Trigger index="8"/>
+            <Trigger index="9"/>
+            <Trigger index="10"/>
+            <Trigger index="11"/>
+            <Trigger index="12"/>
+            <Trigger index="13"/>
+            <Trigger index="14"/>
+            <Trigger index="15"/>
+        </Triggers>
+        <MatchUnits>
+            <MatchUnit index="0" enabled="1" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="01" value1="00" trigger="0"/>
+            <MatchUnit index="1" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="2" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="3" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="4" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="5" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="6" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="7" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="8" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="9" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="10" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="11" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="12" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="13" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="14" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+            <MatchUnit index="15" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
+        </MatchUnits>
+        <Expressions type="Static">
+            <Expression>M0</Expression>
+        </Expressions>
+    </AoCore>
+    <GAO_ID>0001100011100011</GAO_ID>
+</GAO_CONFIG>

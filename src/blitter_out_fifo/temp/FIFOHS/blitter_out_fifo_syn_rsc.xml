@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module name="blitter_out_fifo" Register="57" Alu="8" Lut="55" Bsram="1" T_Register="57(57)" T_Alu="8(8)" T_Lut="55(55)" T_Bsram="1(1)"/>
