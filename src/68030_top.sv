@@ -186,6 +186,7 @@ logic [7:0] spr_idx;
 localparam logic [7:0] REG_SPR_DATA = 8'h0b;
 logic [15:0] cursorSprite [16];
 localparam logic [7:0] REG_BLT_START = 8'h0c;
+reg blitStart;
 localparam logic [7:0] REG_BLT_CMD = 8'h0d;
 logic [7:0] blt_cmd;
 localparam logic [7:0] REG_BLT_DESTX_LOW = 8'h0e;
@@ -276,7 +277,6 @@ sdram_interface sdram_interface_inst(
 	.O_sdram_ba,
 	.IO_sdram_dq
 ); 
-reg blitStart;
 blitter blitterinst (
     .rst(~reset_n),
     .blit_clk(sdram_clk),
