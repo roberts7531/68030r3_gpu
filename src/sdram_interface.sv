@@ -32,7 +32,7 @@ module sdram_interface(
     output logic blitter_fifo_wr,
     input blitter_fifo_fill_req,
     input [9:0] blitter_line,
-
+    input [7:0] blitterXoffset,
     input [31:0] blitter_data_in,
     output logic blitter_fifo_rd_en,
     input blitter_fifo_commit_req,
@@ -69,7 +69,6 @@ localparam logic [2:0] PRECH_CMD = 3'b010;
 localparam logic [2:0] REFRESH_CMD=  3'b001;
 
 // timing related
-localparam logic [3:0] DELAY_AFTER_CS = 3;
 localparam logic [2:0] READ_DELAY = 7;
 localparam logic [22:0] REFRESH_CYCLES = 80_000;
 localparam logic [3:0] DTACK_HOLD = 6;
@@ -80,21 +79,14 @@ always @(posedge clk) begin
     line_fill_req_sync <= {line_fill_req_sync[0],fifo_line_fill_req};
 end
 logic cpu_rd;
-reg cpu_cs_sync;
 reg [15:0] lastData;
 reg reset_n_sync;
 reg cs1,cs2,cs3,cs4,cs5,cs6,rd1,rd2;
 always @(posedge clk) begin 
-    cs1 <= cpu_cs;
-    cs2 <= cs1;
-    cs3 <= cs2;
-    cs4 <= cs3;
-    cs5 <= cs4;
-    cs6 <= cs5;
+  
     rd1 <= rd_raw;
     rd2 <= rd1;
     cpu_rd <= rd2;
-    cpu_cs_sync <= cs2;
     
     reset_n_sync <= reset_n;
 
@@ -160,7 +152,6 @@ typedef enum logic [3:0] {
     CREG_DTACK
 } creg_fsm_state_t;
 creg_fsm_state_t creg_state;
-logic [4:0] csDelay2;
 always @(posedge clk) begin 
     controlRegWr <= 0;
     controlRegRd <= 0;
@@ -207,8 +198,7 @@ typedef enum logic [4:0] {
     ACTIVATE_LINE_FILL,//8
     READ_LINE_FILL, //9
     END_LINE_FILL, //a
-    CONTROL_REG_ACCESS,//b
-    CONTROL_REG_ACCESS_DELAY,
+
     BLITTER_ACTIVATE,//c
     BLITTER_LINE_FILL,//d
     BLITTER_LINE_COMMIT,//e
@@ -228,7 +218,6 @@ line_fill_req_src_t req_source;
 
 logic sdrc_busy;
 logic [4:0] readDelay;
-logic [7:0] csDelay;
 logic [7:0] cregDelay;
 logic [22:0] refreshCounter; 
 logic [7:0] burstLen;
@@ -266,7 +255,7 @@ blitter_fifo_rd_en <=0;
                     if (blitter_fifo_fill_req) begin 
                         req_source <= SRC_BLITTER;
                         I_sdrc_data_len <= 8'hff;
-                        I_sdrc_addr <= {2'b00,1'b0,blitter_line,8'd0};
+                        I_sdrc_addr <= {2'b00,1'b0,blitter_line,blitterXoffset};
                         I_sdrc_cmd <= ACT_CMD;
                         I_sdrc_cmd_en <= 1;
                         sdram_fsm_state <= ACTIVATE_LINE_FILL;
@@ -287,7 +276,6 @@ blitter_fifo_rd_en <=0;
                             sdram_fsm_state <= REFRESH;
                         end else begin
                             if (sdram_cs) begin 
-                                csDelay <= DELAY_AFTER_CS;
                                 sdram_fsm_state <= CS_DELAY;
                             end
                         end
@@ -296,7 +284,6 @@ blitter_fifo_rd_en <=0;
             end
 
             CS_DELAY: begin 
-                if (csDelay == 0) begin
                     I_sdrc_addr <= cpu_addr[19:1];
                     I_sdrc_data <= {cpu_sdram_data_in[7:0],cpu_sdram_data_in[15:8],cpu_sdram_data_in[7:0],cpu_sdram_data_in[15:8]};
                     case({cpu_uw,cpu_lw,cpu_addr[0]})
@@ -312,7 +299,6 @@ blitter_fifo_rd_en <=0;
                     I_sdrc_cmd_en <= 1;
                     sdram_fsm_state <= ACTIVATE;
                     
-                end else csDelay <= csDelay -1;
             end
 
             ACTIVATE: begin 
@@ -351,7 +337,7 @@ blitter_fifo_rd_en <=0;
 
             DTACK: begin 
                 sdram_dtack<=1;
-                if (~cpu_cs_sync)begin 
+                if (~cpu_cs)begin 
                     sdram_fsm_state <= IDLE;
                 end
                     
@@ -397,21 +383,6 @@ blitter_fifo_rd_en <=0;
                     sdram_fsm_state <= IDLE;
                 end
             end
-     
-            CONTROL_REG_ACCESS: begin 
-                cpu_sdram_data_out <= creg_data_in;
-                sdram_dtack <=1;
-
-                sdram_fsm_state <= CONTROL_REG_ACCESS_DELAY;
-                
-
-            end
-            CONTROL_REG_ACCESS_DELAY: begin 
-                if (~cpu_cs_sync) begin 
-                    sdram_fsm_state <=IDLE;
-                end
-            end
-
             BLITTER_ACTIVATE: begin 
                 I_sdrc_cmd_en <= 0;
                 blitter_fifo_rd_en <=1;

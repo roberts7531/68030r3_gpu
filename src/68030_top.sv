@@ -215,6 +215,7 @@ logic [7:0] blt_pat_mode;
 wire [7:0] cregAddr;
 wire [31:0] blitter_data_in;
 wire [9:0] blitter_line;
+wire [7:0] blitterXoffset;
 wire blitter_ack;
 sdram_interface sdram_interface_inst(
     .clk(sdram_clk),
@@ -253,7 +254,7 @@ sdram_interface sdram_interface_inst(
     .blitter_fifo_commit_req,
     .blitter_ack,
     .blitReady,
-
+    .blitterXoffset,
     //sdram interface
     .O_sdram_clk,
 	.O_sdram_cke,
@@ -285,7 +286,7 @@ blitter blitterinst (
     .startBlit(blitStart),
     .blitReady(blitReady),
 
-
+    .blitterXoffset,
     .blitter_line,
     .data_in(fifo_sdram_data_out),
     .blitterWr(blitter_fifo_wr),
