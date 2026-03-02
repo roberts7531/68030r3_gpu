@@ -94,7 +94,6 @@ wire [31:0] fifo_sdram_data_out;
 reg [7:0] scrollY_vsync;
 reg [7:0] scrollX_vsync;
 
-integer i;
 logic [15:0] pattern [16];
 wire blitReady;
 always @(posedge sdram_clk) begin 
@@ -173,13 +172,19 @@ localparam logic [7:0] REG_PAL_G = 8'h04;
 logic [7:0] pal_g;
 localparam logic [7:0] REG_PAL_B = 8'h05;
 logic [7:0] pal_b;
+logic [7:0] blues [256];
+logic [7:0] greens [256];
+logic [7:0] reds [256] ;
 localparam logic [7:0] REG_SPR_XLOW = 8'h06;
 localparam logic [7:0] REG_SPR_XHIGH = 8'h07;
+logic [11:0] cursorX;
 localparam logic [7:0] REG_SPR_YLOW = 8'h08;
 localparam logic [7:0] REG_SPR_YHIGH = 8'h09;
+logic [11:0] cursorY;
 localparam logic [7:0] REG_SPR_IDX = 8'h0a;
 logic [7:0] spr_idx;
 localparam logic [7:0] REG_SPR_DATA = 8'h0b;
+logic [15:0] cursorSprite [16];
 localparam logic [7:0] REG_BLT_START = 8'h0c;
 localparam logic [7:0] REG_BLT_CMD = 8'h0d;
 logic [7:0] blt_cmd;
@@ -313,6 +318,7 @@ FIFO_HS_Top pixel_fifo(
 		.RdEn(fifo_rd_en), //input RdEn
 		.Q(fifo_data_out), //output [7:0] Q
 	);
+
 wire [10:0] sx;
 wire [9:0] sy;
 video_timing1024 highresMode(
@@ -334,17 +340,20 @@ video_timing1024 highresMode(
     .line_fill_ack(fifo_line_fill_ack)
 ); 
 
+wire cursorActive = (sx >= cursorX && sx<cursorX+12'd16) && (sy >= cursorY && sy<cursorY+12'd16); 
+wire [3:0] cx = sx - cursorX;   // 0..15
+wire [3:0] cy = sy - cursorY;   // 0..15
 
-//wire reset_n;
-//assign reset_n = 1;
-wire [21:0] address_for_scope;
-assign address_for_scope = {cpu_addr[20:1], 1'b0}; // safe: A0=0 for display only
+wire cursorPixel = cursorActive 
+                   ? cursorSprite[cy][15 - cx] 
+                   : 1'b0;
+wire [7:0] r = (cursorPixel) ? 8'h00 : reds[fifo_data_out];
+wire [7:0] g = (cursorPixel) ? 8'h00 : greens[fifo_data_out];
+wire [7:0] b = (cursorPixel) ? 8'h00 : blues[fifo_data_out];
 
-
-
-wire [7:0] I_rgb_r;
-wire [7:0] I_rgb_g;
-wire [7:0] I_rgb_b;
+wire [7:0] I_rgb_r = (I_rgb_de) ? r : 0;
+wire [7:0] I_rgb_g = (I_rgb_de) ? g : 0;
+wire [7:0] I_rgb_b = (I_rgb_de) ? b : 0;
 
 DVI_TX_Top hdmi(
 		.I_rst_n(reset_n), //input I_rst_n
@@ -361,28 +370,4 @@ DVI_TX_Top hdmi(
 		.O_tmds_data_p(O_tmds_data_po), //output [2:0] O_tmds_data_p
 		.O_tmds_data_n(O_tmds_data_ne) //output [2:0] O_tmds_data_n
 	);
-wire [9:0] xPos;
-logic [11:0] cursorX = 12'd100;
-logic [11:0] cursorY = 12'd100;
-logic [15:0] cursorSprite [16];
-wire cursorActive = (sx >= cursorX && sx<cursorX+12'd16) && (sy >= cursorY && sy<cursorY+12'd16); 
-wire [3:0] cx = sx - cursorX;   // 0..15
-wire [3:0] cy = sy - cursorY;   // 0..15
-
-wire cursorPixel = cursorActive 
-                   ? cursorSprite[cy][15 - cx] 
-                   : 1'b0;
-
-assign I_rgb_r = (I_rgb_de) ? r : 0;
-assign I_rgb_g = (I_rgb_de) ? g : 0;
-assign I_rgb_b = (I_rgb_de) ? b : 0;
-wire [7:0] r;
-wire [7:0] g;
-wire [7:0] b;
-logic [7:0] blues [256];
-logic [7:0] greens [256];
-logic [7:0] reds [256] ;
-assign r = (cursorPixel) ? 8'h00 : reds[fifo_data_out];
-assign g = (cursorPixel) ? 8'h00 : greens[fifo_data_out];
-assign b = (cursorPixel) ? 8'h00 : blues[fifo_data_out];
 endmodule

@@ -71,8 +71,6 @@ localparam logic [2:0] REFRESH_CMD=  3'b001;
 // timing related
 localparam logic [2:0] READ_DELAY = 7;
 localparam logic [22:0] REFRESH_CYCLES = 80_000;
-localparam logic [3:0] DTACK_HOLD = 6;
-logic [3:0] dtackHold;
 //CDC sync
 logic [1:0] line_fill_req_sync;
 always @(posedge clk) begin 
@@ -81,7 +79,7 @@ end
 logic cpu_rd;
 reg [15:0] lastData;
 reg reset_n_sync;
-reg cs1,cs2,cs3,cs4,cs5,cs6,rd1,rd2;
+reg rd1,rd2;
 always @(posedge clk) begin 
   
     rd1 <= rd_raw;
