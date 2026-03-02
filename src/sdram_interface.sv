@@ -214,9 +214,7 @@ typedef enum logic [3:0] {
 
 line_fill_req_src_t req_source;
 
-logic sdrc_busy;
 logic [4:0] readDelay;
-logic [7:0] cregDelay;
 logic [22:0] refreshCounter; 
 logic [7:0] burstLen;
 logic firstWord;
@@ -226,7 +224,7 @@ always @(posedge clk) begin
     sdram_dtack <=0;
     
     burst_ack <= 0;
-blitter_fifo_rd_en <=0;
+    blitter_fifo_rd_en <=0;
 
     if (~reset_n_sync) begin
         sdram_fsm_state <= STARTUP;

@@ -99,10 +99,8 @@ blitter_out_fifo output_fifo1(
 		.WrEn(output1_wr_en), //input WrEn
 		.RdEn(blitterFifoRdEn), //input RdEn
 		.Q(data_out), //output [31:0] Q
-        .Empty(empty)
 
 );
-//assign blitReady = 0;//(currentBlitterState==BLITTER_IDLE);
 
 typedef enum logic [3:0] {
     BLITTER_IDLE,
@@ -122,8 +120,6 @@ logic [15:0] seekCounter;
 logic [15:0] xPos;
 logic [15:0] yPos;
 logic [15:0] srcYpos;
-logic [15:0] destXandWidth;
-logic firstWord;
 logic [15:0] currentPatternRow;
 always @(posedge blit_clk) begin 
 blitReady <=0;
@@ -170,7 +166,7 @@ output1_wr_en <= 0;
                 end
             end
             BLITTER_FILL_START: begin 
-                if (fifoFillAck & empty) begin 
+                if (fifoFillAck) begin 
                     fifoFillRequest <= 0;
                     currentBlitterState <= BLITTER_FILL_DO_X;
                     input1_rd_en <= 1;

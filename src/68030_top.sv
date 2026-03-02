@@ -37,7 +37,6 @@ wire cpu_in_cs = ~cpu_cs_n;
 wire cpu_rd = ~cpu_rd_n;
 wire cpu_uw = ~cpu_uw_n;
 wire cpu_lw = ~cpu_lw_n;
-reg dtack;
 wire cpu_dtack;
 assign cpu_dtack_n = ~cpu_dtack;
 
@@ -222,7 +221,7 @@ logic [15:0] blt_srcy;
 
 
 
-wire [7:0] cregAddr;
+
 wire [31:0] blitter_data_in;
 wire [9:0] blitter_line;
 wire [7:0] blitterXoffset;
