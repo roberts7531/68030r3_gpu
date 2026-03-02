@@ -93,7 +93,6 @@ wire [7:0] fifo_burst_len;
 wire [31:0] fifo_sdram_data_out;
 reg [7:0] scrollY_vsync;
 reg [7:0] scrollX_vsync;
-//reg [7:0] creg [0:50];
 
 integer i;
 logic [15:0] pattern [16];
@@ -105,10 +104,7 @@ always @(posedge sdram_clk) begin
         scrollY_vsync <= scrolly;
     end
     if (~reset_n) begin 
-       // for (i = 0; i < 50; i = i + 1)
-        //    creg[i] <= 8'h00;
-                blitStart <= 0;
-
+        blitStart <= 0;
     end else begin
         if(controlRegRd) begin 
             if (cpu_addr_sync[7:0] == REG_BLT_START) creg_data_in[0] <= blitReady;
@@ -153,11 +149,15 @@ always @(posedge sdram_clk) begin
                 REG_BLT_HEIGHT_HIGH: blt_height[15:8] <= cpu_data_sync[15:8];
                 REG_BLT_PAT_BGCOL: blt_pat_bgcol <= cpu_data_sync[15:8];
                 REG_BLT_PAT_MODE: blt_pat_mode <= cpu_data_sync[15:8];
+                REG_BLT_SRCX_LOW: blt_srcx[7:0] <= cpu_data_sync[15:8];
+                REG_BLT_SRCX_HIGH: blt_srcx[15:8] <= cpu_data_sync[15:8];
+                REG_BLT_SRCY_LOW: blt_srcy[7:0] <= cpu_data_sync[15:8];
+                REG_BLT_SRCY_HIGH: blt_srcy[15:8] <= cpu_data_sync[15:8];
             endcase
         end
     end
-
 end
+
 wire  controlRegRd, controlRegWr;
 logic [7:0] creg_data_in;
 
@@ -205,8 +205,12 @@ localparam logic [7:0] REG_BLT_PAT_BGCOL = 8'h19;
 logic [7:0] blt_pat_bgcol;
 localparam logic [7:0] REG_BLT_PAT_MODE = 8'h1A;
 logic [7:0] blt_pat_mode;
-
-
+localparam logic [7:0] REG_BLT_SRCX_LOW = 8'h1B;
+localparam logic [7:0] REG_BLT_SRCX_HIGH = 8'h1C;
+logic [15:0] blt_srcx;
+localparam logic [7:0] REG_BLT_SRCY_LOW = 8'h1D;
+localparam logic [7:0] REG_BLT_SRCY_HIGH = 8'h1E;
+logic [15:0] blt_srcy;
 
 
 
@@ -271,11 +275,11 @@ reg blitStart;
 blitter blitterinst (
     .rst(~reset_n),
     .blit_clk(sdram_clk),
-    .sdram_clk(sdram_clk),
 
     .i_dest_x(blt_destx),
     .i_dest_y(blt_desty),
-
+    .i_src_x(blt_srcx),
+    .i_src_y(blt_srcy),
     .i_width(blt_width),
     .i_height(blt_height),
     .i_pattern(pattern),
@@ -308,8 +312,6 @@ FIFO_HS_Top pixel_fifo(
 		.WrEn(fifo_write_en), //input WrEn
 		.RdEn(fifo_rd_en), //input RdEn
 		.Q(fifo_data_out), //output [7:0] Q
-		.Empty(Empty_o), //output Empty 
-		.Full(Full_o) //output Full
 	);
 wire [10:0] sx;
 wire [9:0] sy;
