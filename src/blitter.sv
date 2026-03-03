@@ -98,19 +98,25 @@ blitter_out_fifo output_fifo1(
 		.RdClk(blit_clk), //input RdClk
 		.WrEn(output1_wr_en), //input WrEn
 		.RdEn(blitterFifoRdEn), //input RdEn
-		.Q(data_out), //output [31:0] Q
+		.Q(data_out) //output [31:0] Q
 
 );
 
-typedef enum logic [3:0] {
-    BLITTER_IDLE,
-    BLITTER_FILL_START,
-    BLITTER_FILL_DO_X,
-    BLITTER_FILL_COMMIT_LINE,
-    BLITTER_FILL_COMMIT_DEACK,
-    BLITTER_BLIT_DEST_FILL,
-    BLITTER_DONE,
-    BLITTER_END_DELAY
+typedef enum logic [4:0] {
+    BLITTER_IDLE, //0
+    BLITTER_FILL_START, //1
+    BLITTER_FILL_DO_X,  //2
+    BLITTER_FILL_COMMIT_LINE, //3
+    BLITTER_FILL_COMMIT_DEACK,//4
+    BLITTER_BLIT_DEST_FILL,//5
+    BLITTER_BLIT_DEST_FILL_DEACK,//6
+    BLITTER_DONE,//7
+    BLITTER_END_DELAY,//8
+    BLITTER_BLIT_SRC_FILL,//9
+    BLITTER_BLIT_SEEK_SRC,//a
+    BLITTER_BLIT_STREAM,//b
+    BLITTER_BLIT_COMMIT_LINE,//c
+    BLITTER_BLIT_COMMIT_DEACK//d
     
 } blitter_state_t;
 blitter_state_t currentBlitterState;
@@ -121,6 +127,8 @@ logic [15:0] xPos;
 logic [15:0] yPos;
 logic [15:0] srcYpos;
 logic [15:0] currentPatternRow;
+logic [7:0] firstByte;
+logic firstDest;
 always @(posedge blit_clk) begin 
 blitReady <=0;
 output1_wr_en <= 0;
@@ -147,7 +155,7 @@ output1_wr_en <= 0;
                         end
                         BLIT_CMD_BLIT: begin 
                             xPos <= 0;
-                            if (src_y > dest_y) begin 
+                            if (src_y <= dest_y) begin 
                                 yPos <= dest_y + height - 1;
                                 blitter_line <= dest_y + height - 1;
                                 srcYpos <= src_y + height -1;
@@ -226,11 +234,16 @@ output1_wr_en <= 0;
                     blitter_line <= srcYpos;
                     fifoFillRequest <= 0;
                     fifoSelect <= 1;
+                    currentBlitterState <= BLITTER_BLIT_DEST_FILL_DEACK;
+                end
+            end
+            BLITTER_BLIT_DEST_FILL_DEACK: begin 
+                if(~fifoFillAck) begin 
+                    fifoFillRequest <= 1;
                     currentBlitterState <= BLITTER_BLIT_SRC_FILL;
                 end
             end
             BLITTER_BLIT_SRC_FILL: begin 
-                fifoFillRequest <= 1;
                 if (fifoFillAck) begin 
                     // src is in fifo 1
                     fifoFillRequest <= 0;
@@ -240,6 +253,9 @@ output1_wr_en <= 0;
                 end
             end
             BLITTER_BLIT_SEEK_SRC: begin 
+                firstByte <= input2_data;
+                firstDest <= 1;
+                input2_rd_en <= 0;
                 //input2_rd_en
                 if (seekCounter == src_x) begin 
                     input2_rd_en <= 0;
@@ -256,13 +272,17 @@ output1_wr_en <= 0;
                 output1_data <= input1_data;
                 if ((xPos >= dest_x) && (xPos < dest_x+width)) begin 
                     output1_data <= input2_data;
+                    if (firstDest) begin 
+                        output1_data <= firstByte;
+                        firstDest<=0;
+                    end
                     input2_rd_en <=1;
                 end
                 if (xPos < 1024) begin 
                     xPos <= xPos +1;
                 end  else begin 
-                    input2_rd_en <= 0;
                     input1_rd_en <= 0;
+                    blitter_line <= yPos;
                     currentBlitterState <= BLITTER_BLIT_COMMIT_LINE;
                     outputFifoCommitRequest <=1;
                     xPos <= 0;
@@ -271,12 +291,14 @@ output1_wr_en <= 0;
             BLITTER_BLIT_COMMIT_LINE: begin 
                 output1_wr_en <= 0;
                 if (outputFifoCommitAck) begin 
+                    input2_rd_en <= 0;
+
                     outputFifoCommitRequest <= 0;
-                    if (src_y > dest_y) begin 
+                    if (src_y <= dest_y) begin 
                         if (yPos > dest_y) begin 
-                            yPos <= yPos - 1;
-                            srcYpos <= srcYpos -1;
-                            blitter_line <= yPos - 1;
+                            yPos <= yPos - 1'b1;
+                            srcYpos <= srcYpos -1'b1;
+                            blitter_line <= yPos - 1'b1;
                             currentBlitterState <= BLITTER_BLIT_COMMIT_DEACK;
                         end else begin 
                             endDelay <= 5;

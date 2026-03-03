@@ -70,7 +70,7 @@ localparam logic [2:0] REFRESH_CMD=  3'b001;
 
 // timing related
 localparam logic [2:0] READ_DELAY = 7;
-localparam logic [22:0] REFRESH_CYCLES = 80_000;
+localparam logic [22:0] REFRESH_CYCLES = 8_000;
 //CDC sync
 logic [1:0] line_fill_req_sync;
 always @(posedge clk) begin 
@@ -128,9 +128,9 @@ SDRAM_Controller_HS_Top sdrc2(
 	.I_sdram_clk(clk), //input I_sdram_clk
 	.I_sdrc_cmd_en, //input I_sdrc_cmd_en
 	.I_sdrc_cmd, //input [2:0] I_sdrc_cmd
-	.I_sdrc_precharge_ctrl(1), //input I_sdrc_precharge_ctrl
-	.I_sdram_power_down(0), //input I_sdram_power_down
-	.I_sdram_selfrefresh(0), //input I_sdram_selfrefresh
+	.I_sdrc_precharge_ctrl(1'b1), //input I_sdrc_precharge_ctrl
+	.I_sdram_power_down(1'b0), //input I_sdram_power_down
+	.I_sdram_selfrefresh(1'b0), //input I_sdram_selfrefresh
 	.I_sdrc_addr, //input [20:0] I_sdrc_addr
 	.I_sdrc_dqm, //input [3:0] I_sdrc_dqm
 	.I_sdrc_data, //input [31:0] I_sdrc_data
@@ -302,30 +302,30 @@ always @(posedge clk) begin
                 if (O_sdrc_cmd_ack) begin 
                     if (cpu_rd) begin 
                         I_sdrc_cmd <= READ_CMD;
-                        I_sdrc_cmd_en <=1;
+                        I_sdrc_cmd_en <=1'b1;
                         sdram_fsm_state <= READ;
                         readDelay <= READ_DELAY;
                     end else begin 
                         I_sdrc_cmd <= WRITE_CMD;
-                        I_sdrc_cmd_en <= 1;
+                        I_sdrc_cmd_en <= 1'b1;
                         sdram_fsm_state <= WRITE;
                     end 
                 end 
             end
 
             READ: begin 
-                I_sdrc_cmd_en <=0;
-                if (readDelay ==0) begin 
+                I_sdrc_cmd_en <=1'b0;
+                if (readDelay ==1'b0) begin 
                     sdram_fsm_state <= DTACK;
                     if (cpu_addr[0]) cpu_sdram_data_out <= {O_sdrc_data[23:16],O_sdrc_data[31:24]}; //O_sdrc_data[31:16];
                     else cpu_sdram_data_out <= {O_sdrc_data[7:0],O_sdrc_data[15:8]};//O_sdrc_data[15:0];
                 end else begin
-                    readDelay <= readDelay -1;
+                    readDelay <= readDelay - 1'b1;
                 end
             end
 
             WRITE: begin 
-                I_sdrc_cmd_en <=0;
+                I_sdrc_cmd_en <=1'b0;
                 if(O_sdrc_cmd_ack) begin
                     sdram_fsm_state <= DTACK;
                 end
@@ -367,9 +367,9 @@ always @(posedge clk) begin
                     if (burstLen == I_sdrc_data_len) begin 
                         burstLen <= 0;
                         sdram_fsm_state <= END_LINE_FILL;
-                    end else burstLen <= burstLen + 1;
+                    end else burstLen <= burstLen + 1'b1;
 
-                end else readDelay <= readDelay -1;
+                end else readDelay <= readDelay -1'b1;
 
             end
             END_LINE_FILL: begin 
@@ -408,7 +408,7 @@ always @(posedge clk) begin
                 if (burstLen == I_sdrc_data_len) begin 
                     burstLen <= 0;
                     sdram_fsm_state <= BLITTER_LINE_COMMIT_ACK;
-                end else burstLen <= burstLen + 1;
+                end else burstLen <= burstLen + 1'b1;
 
             end
             BLITTER_LINE_COMMIT_ACK: begin 

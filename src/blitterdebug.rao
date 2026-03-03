@@ -156,47 +156,55 @@
             <Signal capture_enable="true">blitterinst/output_fifo1/Empty</Signal>
             <Signal capture_enable="true">blitterinst/output_fifo1/Full</Signal>
             <Signal capture_enable="true">sdram_interface_inst/O_sdrc_cmd_ack</Signal>
-            <Bus capture_enable="true" name="sdram_interface_inst/sdrc2/O_sdrc_data[31:0]">
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[31]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[30]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[29]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[28]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[27]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[26]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[25]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[24]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[23]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[22]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[21]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[20]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[19]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[18]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[17]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[16]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[15]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[14]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[13]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[12]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[11]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[10]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[9]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[8]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[7]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[6]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[5]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[4]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[3]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[2]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[1]</Signal>
-                <Signal>sdram_interface_inst/sdrc2/O_sdrc_data[0]</Signal>
-            </Bus>
             <Signal capture_enable="true">blitterinst/blitReady</Signal>
+            <Bus capture_enable="true" name="blitterinst/srcYpos[15:0]">
+                <Signal>blitterinst/srcYpos[15]</Signal>
+                <Signal>blitterinst/srcYpos[14]</Signal>
+                <Signal>blitterinst/srcYpos[13]</Signal>
+                <Signal>blitterinst/srcYpos[12]</Signal>
+                <Signal>blitterinst/srcYpos[11]</Signal>
+                <Signal>blitterinst/srcYpos[10]</Signal>
+                <Signal>blitterinst/srcYpos[9]</Signal>
+                <Signal>blitterinst/srcYpos[8]</Signal>
+                <Signal>blitterinst/srcYpos[7]</Signal>
+                <Signal>blitterinst/srcYpos[6]</Signal>
+                <Signal>blitterinst/srcYpos[5]</Signal>
+                <Signal>blitterinst/srcYpos[4]</Signal>
+                <Signal>blitterinst/srcYpos[3]</Signal>
+                <Signal>blitterinst/srcYpos[2]</Signal>
+                <Signal>blitterinst/srcYpos[1]</Signal>
+                <Signal>blitterinst/srcYpos[0]</Signal>
+            </Bus>
+            <Bus capture_enable="true" name="blitterinst/input2_data[7:0]">
+                <Signal>blitterinst/input2_data[7]</Signal>
+                <Signal>blitterinst/input2_data[6]</Signal>
+                <Signal>blitterinst/input2_data[5]</Signal>
+                <Signal>blitterinst/input2_data[4]</Signal>
+                <Signal>blitterinst/input2_data[3]</Signal>
+                <Signal>blitterinst/input2_data[2]</Signal>
+                <Signal>blitterinst/input2_data[1]</Signal>
+                <Signal>blitterinst/input2_data[0]</Signal>
+            </Bus>
+            <Signal capture_enable="true">blitterinst/input2_rd_en</Signal>
+            <Signal capture_enable="true">blitterinst/input_fifo2/WrEn</Signal>
+            <Signal capture_enable="true">blitterinst/input_fifo1/WrEn</Signal>
+            <Signal capture_enable="true">blitterinst/input_fifo2/Empty</Signal>
         </SignalList>
         <Triggers>
             <Trigger index="0">
                 <SignalList>
                     <Signal>blitterinst/rst</Signal>
                     <Signal>blitterinst/blitRequested</Signal>
+                    <Bus restorename="blt_cmd[7:0]">
+                        <Signal>blt_cmd[7]</Signal>
+                        <Signal>blt_cmd[6]</Signal>
+                        <Signal>blt_cmd[5]</Signal>
+                        <Signal>blt_cmd[4]</Signal>
+                        <Signal>blt_cmd[3]</Signal>
+                        <Signal>blt_cmd[2]</Signal>
+                        <Signal>blt_cmd[1]</Signal>
+                        <Signal>blt_cmd[0]</Signal>
+                    </Bus>
                 </SignalList>
             </Trigger>
             <Trigger index="1"/>
@@ -216,7 +224,7 @@
             <Trigger index="15"/>
         </Triggers>
         <MatchUnits>
-            <MatchUnit index="0" enabled="1" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="01" value1="00" trigger="0"/>
+            <MatchUnit index="0" enabled="1" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="0100000001" value1="0000000000" trigger="0"/>
             <MatchUnit index="1" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
             <MatchUnit index="2" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
             <MatchUnit index="3" enabled="0" match_type="0" counter_enable="0" counter_width="2" counter="2" countinuous="0" func="0" value0="" value1=""/>
@@ -237,5 +245,5 @@
             <Expression>M0</Expression>
         </Expressions>
     </AoCore>
-    <GAO_ID>0001100011100011</GAO_ID>
+    <GAO_ID>0010110011010111</GAO_ID>
 </GAO_CONFIG>

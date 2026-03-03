@@ -57,15 +57,15 @@ always @(posedge sdram_clk)begin
     cpu_in_sync <= syn2;
     
     if(~cpu_in_sync) begin 
-        inputSyncDelay <= 3;
+        inputSyncDelay <= 4;
         cpu_cs <= 0;
     end else begin 
+        cpu_rd_sync <= cpu_rd;
         if(inputSyncDelay==0) begin 
             cpu_cs <= 1;
             cpu_addr_sync <= cpu_addr;
             cpu_data_sync <= cpu_data;
-            cpu_rd_sync <= cpu_rd;
-        end else inputSyncDelay <= inputSyncDelay -1;
+        end else inputSyncDelay <= inputSyncDelay - 1'b1;
     end
 end 
 
@@ -136,7 +136,7 @@ always @(posedge sdram_clk) begin
                 REG_BLT_DESTY_HIGH: blt_desty[15:8] <= cpu_data_sync[15:8];
                 REG_BLT_PAT_COL: blt_patt_col <= cpu_data_sync[15:8];
                 REG_BLT_PATT_DATA: begin 
-                    blt_patt_idx <= blt_patt_idx + 1;
+                    blt_patt_idx <= blt_patt_idx + 1'b1;
                     if (blt_patt_idx[0]) pattern[blt_patt_idx[7:1]][7:0] <= cpu_data_sync[15:8];
                     else pattern[blt_patt_idx[7:1]][15:8] <= cpu_data_sync[15:8];
                 end
@@ -315,7 +315,7 @@ FIFO_HS_Top pixel_fifo(
 		.RdClk(pix_clk), //input RdClk
 		.WrEn(fifo_write_en), //input WrEn
 		.RdEn(fifo_rd_en), //input RdEn
-		.Q(fifo_data_out), //output [7:0] Q
+		.Q(fifo_data_out) //output [7:0] Q
 	);
 
 wire [10:0] sx;
