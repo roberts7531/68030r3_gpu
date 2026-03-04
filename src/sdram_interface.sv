@@ -16,6 +16,7 @@ module sdram_interface(
     input [20:0] cpu_addr,
     input [15:0] cpu_sdram_data_in,
     input cpu_cs,
+    input cs_raw,
     input rd_raw,
     input cpu_uw,
     input cpu_lw,
@@ -31,7 +32,7 @@ module sdram_interface(
     
     output logic blitter_fifo_wr,
     input blitter_fifo_fill_req,
-    input [9:0] blitter_line,
+    input [12:0] blitter_line,
     input [7:0] blitterXoffset,
     input [31:0] blitter_data_in,
     output logic blitter_fifo_rd_en,
@@ -159,7 +160,7 @@ always @(posedge clk) begin
     end else 
     case (creg_state) 
         CREG_IDLE: begin 
-            if(reg_cs && ~creg_busy) begin 
+            if(reg_cs ) begin 
                  creg_state <= CREG_START;
             end
         end
@@ -213,7 +214,7 @@ typedef enum logic [3:0] {
 } line_fill_req_src_t;
 
 line_fill_req_src_t req_source;
-
+logic [3:0] burstReadTimeout;
 logic [4:0] readDelay;
 logic [22:0] refreshCounter; 
 logic [7:0] burstLen;
@@ -260,7 +261,7 @@ always @(posedge clk) begin
                         req_source <= SRC_BLITTER;
 
                         I_sdrc_data_len <= 8'hff;
-                        I_sdrc_addr <= {2'b00,1'b0,blitter_line,8'd0};
+                        I_sdrc_addr <= {blitter_line,8'd0};
                         I_sdrc_cmd <= ACT_CMD;
                         I_sdrc_cmd_en <= 1;
                         sdram_fsm_state <= BLITTER_ACTIVATE;
@@ -333,7 +334,7 @@ always @(posedge clk) begin
 
             DTACK: begin 
                 sdram_dtack<=1;
-                if (~cpu_cs)begin 
+                if (~sdram_cs)begin 
                     sdram_fsm_state <= IDLE;
                 end
                     
@@ -367,6 +368,7 @@ always @(posedge clk) begin
                     if (burstLen == I_sdrc_data_len) begin 
                         burstLen <= 0;
                         sdram_fsm_state <= END_LINE_FILL;
+                        burstReadTimeout <= 3;
                     end else burstLen <= burstLen + 1'b1;
 
                 end else readDelay <= readDelay -1'b1;
@@ -374,6 +376,7 @@ always @(posedge clk) begin
             end
             END_LINE_FILL: begin 
                 burst_ack <= 1;
+
                 if (~actual_request) begin 
                     burst_ack <=0;
                     sdram_fsm_state <= IDLE;

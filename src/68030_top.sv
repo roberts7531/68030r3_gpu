@@ -38,8 +38,7 @@ wire cpu_rd = ~cpu_rd_n;
 wire cpu_uw = ~cpu_uw_n;
 wire cpu_lw = ~cpu_lw_n;
 wire cpu_dtack;
-assign cpu_dtack_n = ~cpu_dtack;
-
+assign cpu_dtack_n = ~(cpu_dtack & cpu_cs);
 assign cpu_int_n = 1;
 
 assign cpu_data = (cpu_rd_sync) ? cpu_data_out : 16'bz;  // Drive or release
@@ -59,21 +58,54 @@ always @(posedge sdram_clk)begin
     if(~cpu_in_sync) begin 
         inputSyncDelay <= 4;
         cpu_cs <= 0;
+        divisor_rst <= 1;
+        divisorDelay <= 11;
     end else begin 
         cpu_rd_sync <= cpu_rd;
         if(inputSyncDelay==0) begin 
-            cpu_cs <= 1;
-            cpu_addr_sync <= cpu_addr;
-            cpu_data_sync <= cpu_data;
+            if(cpu_addr[20] | vram_stride == 0) begin 
+                cpu_cs <= 1;
+                cpu_addr_sync <= cpu_addr;
+                cpu_data_sync <= cpu_data;
+            end else begin
+                divisor_rst<=0;
+                if (divisorDelay ==0) begin 
+                    cpu_cs <= 1;
+                    cpu_addr_sync <= (cpu_y << 9) + cpu_x[10:1];
+                    cpu_data_sync <= cpu_data;
+                end else divisorDelay <= divisorDelay - 1'b1;
+            end
         end else inputSyncDelay <= inputSyncDelay - 1'b1;
     end
 end 
-
+logic [3:0] divisorDelay;
+logic divisor_rst;
+wire [20:0] cpu_y;
+wire [20:0] cpu_x;
+Integer_Division_Top addrDivider(
+		.clk(sdram_clk), //input clk
+		.rstn(~divisor_rst), //input rstn
+		.dividend({cpu_addr[19:0],1'b0}), //input [20:0] dividend
+		.divisor(vram_stride), //input [10:0] divisor
+		.remainder(cpu_x), //output [10:0] remainder
+		.quotient(cpu_y) //output [20:0] quotient
+	);
 //tmds and pixel clocks
-Gowin_rPLL tmds_clk_pll(
+//Gowin_rPLL tmds_clk_pll(
+//        .clkout(tmds_clk), //output clkout
+//        .clkin(clk) //input clkin
+//    );
+wire tmds_lock;
+Gowin_rPLL_dynamic dynpll(
         .clkout(tmds_clk), //output clkout
-        .clkin(clk) //input clkin
+        .lock(tmds_lock), //output lock
+        .clkin(clk), //input clkin
+        .reset(~reset_n),
+        .fbdsel((video_mode == 0 )? 6'b110100 : 6'b011011), //input [5:0] fbdsel
+        .idsel((video_mode == 0 )? 6'b111111 : 6'b111000), //input [5:0] idsel
+        .odsel((video_mode == 0 )? 6'b111111 : 6'b111100 ) //input [5:0] odsel
     );
+
 Gowin_CLKDIV pix_clk_clkdiv(
         .clkout(pix_clk), //output clkout
         .hclkin(tmds_clk), //input hclkin
@@ -103,6 +135,10 @@ always @(posedge sdram_clk) begin
     end
     if (~reset_n) begin 
         blitStart <= 0;
+        vram_stride <= 0;
+        video_mode <= 0;
+        scrollx <= 0;
+        scrolly <= 0;
     end else begin
         if(controlRegRd) begin 
             if (cpu_addr_sync[7:0] == REG_BLT_START) creg_data_in[0] <= blitReady;
@@ -151,6 +187,12 @@ always @(posedge sdram_clk) begin
                 REG_BLT_SRCX_HIGH: blt_srcx[15:8] <= cpu_data_sync[15:8];
                 REG_BLT_SRCY_LOW: blt_srcy[7:0] <= cpu_data_sync[15:8];
                 REG_BLT_SRCY_HIGH: blt_srcy[15:8] <= cpu_data_sync[15:8];
+                REG_VRAM_STRIDE_LOW: vram_stride[7:0] <= cpu_data_sync[15:8];
+                REG_VRAM_STRIDE_HIGH: vram_stride[10:8] <= cpu_data_sync[15:8];
+                REG_VIDEO_MODE: begin 
+                    video_mode <= cpu_data_sync[11:8];
+                    video_subMode <= cpu_data_sync[15:12];
+                end
             endcase
         end
     end
@@ -216,14 +258,19 @@ logic [15:0] blt_srcx;
 localparam logic [7:0] REG_BLT_SRCY_LOW = 8'h1D;
 localparam logic [7:0] REG_BLT_SRCY_HIGH = 8'h1E;
 logic [15:0] blt_srcy;
-
+localparam logic [7:0] REG_VRAM_STRIDE_LOW = 8'h1F;
+localparam logic [7:0] REG_VRAM_STRIDE_HIGH = 8'h20;
+logic [10:0] vram_stride;
+localparam logic [7:0] REG_VIDEO_MODE = 8'h21;
+logic [3:0] video_mode;
+logic [3:0] video_subMode;
 
 
 
 
 
 wire [31:0] blitter_data_in;
-wire [9:0] blitter_line;
+wire [12:0] blitter_line;
 wire [7:0] blitterXoffset;
 wire blitter_ack;
 sdram_interface sdram_interface_inst(
@@ -238,8 +285,8 @@ sdram_interface sdram_interface_inst(
     .fifo_line_to_fill(lineToFill + scrollY_vsync),
     .fifo_write_en,
     .fifo_sdram_data_out,
-    .x_scroll(scrollX_vsync),
-
+    .x_scroll(scrollX_vsync[7:2]),
+    .cs_raw(cpu_in_cs),
     //cpu interface
     .cpu_addr(cpu_addr_sync),
     .cpu_sdram_data_in(cpu_data_sync),
@@ -318,24 +365,71 @@ FIFO_HS_Top pixel_fifo(
 		.Q(fifo_data_out) //output [7:0] Q
 	);
 
-wire [10:0] sx;
-wire [9:0] sy;
+
+wire [10:0] sx640;
+wire [10:0] sx1024;
+wire [10:0] sx = (video_mode == 0) ? sx1024: sx640;
+
+wire [9:0] sy640;
+wire [9:0] sy1024;
+wire [9:0] sy = (video_mode == 0) ? sy1024: sy640;
+
+wire fifo_rd_en1024;
+wire fifo_rd_en640;
+assign fifo_rd_en = (video_mode == 0) ? fifo_rd_en1024 : fifo_rd_en640;
+
+wire de1024,de640;
+assign I_rgb_de = (video_mode == 0) ? de1024 : de640;
+wire vs1024,vs640;
+assign I_rgb_vs = (video_mode == 0) ? vs1024 : vs640;
+wire hs1024,hs640;
+assign I_rgb_hs = (video_mode == 0) ? hs1024 : hs640;
+
+wire [7:0] data_len_1024;
+wire [7:0] data_len_640;
+assign fifo_burst_len = (video_mode == 0) ? data_len_1024 : data_len_640;
+
+wire [9:0] lineToFill_1024;
+wire [9:0] lineToFill_640;
+assign lineToFill = (video_mode == 0) ? lineToFill_1024 : lineToFill_640;
+
+wire lineFillReq1024;
+wire lineFillReq640;
+assign fifo_line_fill_req = (video_mode == 0) ? lineFillReq1024 : lineFillReq640;
 video_timing1024 highresMode(
-    .rst(~reset_n),
+    .rst(~reset_n | (video_mode == 1)),
     .pix_clk(pix_clk),
 
-    .de(I_rgb_de),
-    .vs(I_rgb_vs),
-    .hs(I_rgb_hs),
+    .de(de1024),
+    .vs(vs1024),
+    .hs(hs1024),
 
-    .sx(sx),
-    .sy(sy),
+    .sx(sx1024),
+    .sy(sy1024),
 
-    .fifo_rd_en,
+    .fifo_rd_en(fifo_rd_en1024),
 
-    .data_len_32(fifo_burst_len),
-    .lineToFill,
-    .line_fill_req(fifo_line_fill_req),
+    .data_len_32(data_len_1024),
+    .lineToFill(lineToFill_1024),
+    .line_fill_req(lineFillReq1024),
+    .line_fill_ack(fifo_line_fill_ack)
+); 
+video_timing640 lowresMode(
+    .rst(~reset_n | (video_mode == 0)),
+    .pix_clk(pix_clk),
+
+    .de(de640),
+    .vs(vs640),
+    .hs(hs640),
+    .scrollX(scrollX_vsync[1:0]),
+    .sx(sx640),
+    .sy(sy640),
+    .doubleSize(video_subMode[0]),
+    .fifo_rd_en(fifo_rd_en640),
+
+    .data_len_32(data_len_640),
+    .lineToFill(lineToFill_640),
+    .line_fill_req(lineFillReq640),
     .line_fill_ack(fifo_line_fill_ack)
 ); 
 
@@ -355,7 +449,7 @@ wire [7:0] I_rgb_g = (I_rgb_de) ? g : 0;
 wire [7:0] I_rgb_b = (I_rgb_de) ? b : 0;
 
 DVI_TX_Top hdmi(
-		.I_rst_n(reset_n), //input I_rst_n
+		.I_rst_n(reset_n ), //input I_rst_n
 		.I_serial_clk(tmds_clk), //input I_serial_clk
 		.I_rgb_clk(pix_clk), //input I_rgb_clk
 		.I_rgb_vs(I_rgb_vs), //input I_rgb_vs

@@ -11,12 +11,16 @@
         <File path="src/blitter_out_fifo/blitter_out_fifo.v" type="file.verilog" enable="1"/>
         <File path="src/dvi_tx/dvi_tx.v" type="file.verilog" enable="1"/>
         <File path="src/fifo_hs/fifo_hs.v" type="file.verilog" enable="1"/>
+        <File path="src/fifo_hs5/fifo_hs5.v" type="file.verilog" enable="0"/>
         <File path="src/gowin_clkdiv/gowin_clkdiv.v" type="file.verilog" enable="1"/>
-        <File path="src/gowin_rpll/gowin_rpll.v" type="file.verilog" enable="1"/>
+        <File path="src/gowin_rpll/gowin_rpll.v" type="file.verilog" enable="0"/>
         <File path="src/gowin_rpll2/gowin_rpll2.v" type="file.verilog" enable="1"/>
+        <File path="src/gowin_rpll640/gowin_rpll640.v" type="file.verilog" enable="0"/>
+        <File path="src/gowin_rpll_dynamic/gowin_rpll_dynamic.v" type="file.verilog" enable="1"/>
+        <File path="src/integer_division/integer_division.v" type="file.verilog" enable="1"/>
         <File path="src/sdram_controller_hs/sdram_controller_hs.v" type="file.verilog" enable="1"/>
         <File path="src/sdram_interface.sv" type="file.verilog" enable="1"/>
-        <File path="src/video_timing.sv" type="file.verilog" enable="0"/>
+        <File path="src/video_timing.sv" type="file.verilog" enable="1"/>
         <File path="src/video_timing1024x768.sv" type="file.verilog" enable="1"/>
         <File path="src/68030r3.cst" type="file.cst" enable="1"/>
         <File path="src/68030r3.sdc" type="file.sdc" enable="1"/>

@@ -16,12 +16,13 @@ module blitter(
     input startBlit,
     output logic blitReady,
 
+
     output logic [7:0] blitterXoffset,
     input [31:0] data_in,
     input blitterWr,
     output reg fifoFillRequest,
     input fifoFillAck,
-    output logic [9:0] blitter_line,
+    output logic [12:0] blitter_line,
     output [31:0] data_out,
     input blitterFifoRdEn,
     output reg outputFifoCommitRequest,
@@ -79,14 +80,15 @@ blitter_in_fifo input_fifo1(
 );
 logic input2_rd_en;
 wire [7:0] input2_data;
+wire input2_empty;
 blitter_in_fifo input_fifo2(
 		.Data(data_in), //input [31:0] Data
 		.WrClk(blit_clk), //input WrClk
 		.RdClk(blit_clk), //input RdClk
 		.WrEn(blitterWr & fifoSelect), //input WrEn
 		.RdEn(input2_rd_en), //input RdEn
-		.Q(input2_data) //output [7:0] Q
-
+		.Q(input2_data), //output [7:0] Q
+        .Empty(input2_empty)
 );
 
 logic [7:0] output1_data;
@@ -114,6 +116,7 @@ typedef enum logic [4:0] {
     BLITTER_END_DELAY,//8
     BLITTER_BLIT_SRC_FILL,//9
     BLITTER_BLIT_SEEK_SRC,//a
+
     BLITTER_BLIT_STREAM,//b
     BLITTER_BLIT_COMMIT_LINE,//c
     BLITTER_BLIT_COMMIT_DEACK//d
@@ -128,10 +131,12 @@ logic [15:0] yPos;
 logic [15:0] srcYpos;
 logic [15:0] currentPatternRow;
 logic [7:0] firstByte;
+
 logic firstDest;
 always @(posedge blit_clk) begin 
 blitReady <=0;
 output1_wr_en <= 0;
+
     if (rst) begin 
         currentBlitterState <= BLITTER_IDLE;
         fifoFillRequest <= 0;
@@ -321,11 +326,14 @@ output1_wr_en <= 0;
             
             end
             BLITTER_BLIT_COMMIT_DEACK: begin 
-                if (~outputFifoCommitAck) begin 
-                    fifoFillRequest <=1;
-                    fifoSelect <= 0;
-                    currentBlitterState <= BLITTER_BLIT_DEST_FILL;
-                end
+                if (input2_empty) begin
+                    input2_rd_en <=0;
+                    if (~outputFifoCommitAck) begin 
+                        fifoFillRequest <=1;
+                        fifoSelect <= 0;
+                        currentBlitterState <= BLITTER_BLIT_DEST_FILL;
+                    end
+                end else input2_rd_en <= 1;
             end
 
         endcase

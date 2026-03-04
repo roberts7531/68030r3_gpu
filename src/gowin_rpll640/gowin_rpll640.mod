@@ -5,17 +5,17 @@
 -part_number GW2AR-LV18QN88C8/I7
 
 
--mod_name Gowin_rPLL2
--file_name gowin_rpll2
--path C:/Users/Roberts/Downloads/68030r3/src/gowin_rpll2/
+-mod_name Gowin_rPLL640
+-file_name gowin_rpll640
+-path C:/Users/Roberts/Downloads/68030r3/src/gowin_rpll640/
 -type PLL
 -rPll true
 -file_type vlg
 -dev_type GW2AR-18
 -dyn_idiv_sel false
--idiv_sel 3
+-idiv_sel 8
 -dyn_fbdiv_sel false
--fbdiv_sel 10
+-fbdiv_sel 37
 -dyn_odiv_sel false
 -odiv_sel 8
 -dyn_da_en true
@@ -23,7 +23,7 @@
 -rst_sig_p false
 -fclkin 27
 -clkfb_sel 0
--en_lock true
+-en_lock false
 -clkout_bypass false
 -clkout_ft_dir 1
 -en_clkoutp false
