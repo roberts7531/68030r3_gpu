@@ -1,0 +1,21 @@
+-series GW2AR
+-device GW2AR-18
+-device_version 
+-package QFN88
+-part_number GW2AR-LV18QN88C8/I7
+
+
+-mod_name Gowin_SDPB
+-file_name gowin_sdpb
+-path C:/Users/Roberts/Downloads/68030r3/src/gowin_sdpb/
+-type RAM_SDP
+-file_type vlg
+-bram_b true
+-depth_0 4800
+-depth_1 4800
+-width_0 8
+-width_1 8
+-read_mode bypass
+-reset_mode sync
+-init_file C:/Users/Roberts/Downloads/68030r3/src/test.mi
+-init_match port_A

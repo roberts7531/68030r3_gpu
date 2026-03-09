@@ -193,7 +193,7 @@ output1_wr_en <= 0;
                 
                 output1_data <= input1_data;
                 if ((xPos >= dest_x) & (xPos < dest_x+width)) begin 
-                    if(patternFillMode[0]) output1_data <= (currentPatternRow[15 - xPos[3:0]])? (input1_data == fillData) ?fillBgCol:fillData: fillData;
+                    if(patternFillMode[0]) output1_data <= (currentPatternRow[15 - xPos[3:0]])? input1_data ^ fillBgCol : input1_data;////(input1_data == fillData) ?fillBgCol:fillData: fillData;
                     else output1_data <= (currentPatternRow[15 - xPos[3:0]])? fillData: fillBgCol;
                 end
 

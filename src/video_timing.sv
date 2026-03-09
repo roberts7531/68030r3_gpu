@@ -24,7 +24,7 @@ end
 
 //ActiveVideo 	FrontPorch 	SyncPulse 	BackPorch 	ActiveVideo 	FrontPorch 	SyncPulse 	BackPorch
 //640	        16	        96	        48 	        480	            11	        2	        31
-assign de = (h_pos < H_ACTIVE_VIDEO) && (v_pos < V_ACTIVE_VIDEO) && (v_pos >0);
+assign de = (h_pos < H_ACTIVE_VIDEO) && (v_pos < V_ACTIVE_VIDEO) ;
 assign vs = (v_pos >= V_ACTIVE_VIDEO + V_FRONT_PORCH) && (v_pos < V_ACTIVE_VIDEO + V_FRONT_PORCH + V_SYNC_PULSE);
 assign hs = (h_pos >= H_ACTIVE_VIDEO + H_FRONT_PORCH) && (h_pos < H_ACTIVE_VIDEO + H_FRONT_PORCH + H_SYNC_PULSE);
 assign sx = h_pos;

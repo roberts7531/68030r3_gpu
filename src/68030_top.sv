@@ -128,6 +128,7 @@ reg [7:0] scrollX_vsync;
 logic [15:0] pattern [16];
 wire blitReady;
 always @(posedge sdram_clk) begin 
+   // textCea <= 0;
     blitStart <= 0;
     if (I_rgb_vs) begin 
         scrollX_vsync <= scrollx;
@@ -139,61 +140,71 @@ always @(posedge sdram_clk) begin
         video_mode <= 0;
         scrollx <= 0;
         scrolly <= 0;
+        textmode_mode <= 0;
     end else begin
         if(controlRegRd) begin 
             if (cpu_addr_sync[7:0] == REG_BLT_START) creg_data_in[0] <= blitReady;
         end else if (controlRegWr) begin 
-            case (cpu_addr_sync[7:0]) 
-                REG_SCROLLY: scrolly <= cpu_data_sync[15:8];
-                REG_SCROLLX: scrollx <= cpu_data_sync[15:8];
-                REG_PAL_IDX: begin 
-                    reds[cpu_data_sync[15:8]] <= pal_r;
-                    greens[cpu_data_sync[15:8]] <= pal_g;
-                    blues[cpu_data_sync[15:8]] <= pal_b;
-                end
-                REG_PAL_R: pal_r <= cpu_data_sync[15:8];
-                REG_PAL_G: pal_g <= cpu_data_sync[15:8];
-                REG_PAL_B: pal_b <= cpu_data_sync[15:8];
-                REG_SPR_XLOW: cursorX[7:0] <= cpu_data_sync[15:8];
-                REG_SPR_XHIGH: cursorX[11:8] <= cpu_data_sync[11:8];
-                REG_SPR_YLOW: cursorY[7:0] <= cpu_data_sync[15:8];
-                REG_SPR_YHIGH: cursorY[11:8] <= cpu_data_sync[11:8];
-                REG_SPR_IDX: spr_idx <= cpu_data_sync[15:8];
-                REG_SPR_DATA: begin 
-                    if(spr_idx[0]) cursorSprite[spr_idx[7:1]][7:0] <= cpu_data_sync[15:8];
-                    else cursorSprite[spr_idx[7:1]][15:8] <= cpu_data_sync[15:8];
-                    spr_idx <= spr_idx + 8'd1;
-                end
-                REG_BLT_START: if (cpu_data_sync[15:8] == 8'h3a)  blitStart <= 1;
-                REG_BLT_CMD: blt_cmd <= cpu_data_sync[15:8];
-                REG_BLT_DESTX_LOW: blt_destx[7:0] <= cpu_data_sync[15:8];
-                REG_BLT_DESTX_HIGH: blt_destx[15:8] <= cpu_data_sync[15:8];
-                REG_BLT_DESTY_LOW: blt_desty[7:0] <= cpu_data_sync[15:8];
-                REG_BLT_DESTY_HIGH: blt_desty[15:8] <= cpu_data_sync[15:8];
-                REG_BLT_PAT_COL: blt_patt_col <= cpu_data_sync[15:8];
-                REG_BLT_PATT_DATA: begin 
-                    blt_patt_idx <= blt_patt_idx + 1'b1;
-                    if (blt_patt_idx[0]) pattern[blt_patt_idx[7:1]][7:0] <= cpu_data_sync[15:8];
-                    else pattern[blt_patt_idx[7:1]][15:8] <= cpu_data_sync[15:8];
-                end
-                REG_BLT_PATT_IDX: blt_patt_idx <= cpu_data_sync[15:8];
-                REG_BLT_WIDTH_LOW: blt_width[7:0] <= cpu_data_sync[15:8];
-                REG_BLT_WIDTH_HIGH: blt_width[15:8] <= cpu_data_sync[15:8];
-                REG_BLT_HEIGHT_LOW: blt_height[7:0] <= cpu_data_sync[15:8];
-                REG_BLT_HEIGHT_HIGH: blt_height[15:8] <= cpu_data_sync[15:8];
-                REG_BLT_PAT_BGCOL: blt_pat_bgcol <= cpu_data_sync[15:8];
-                REG_BLT_PAT_MODE: blt_pat_mode <= cpu_data_sync[15:8];
-                REG_BLT_SRCX_LOW: blt_srcx[7:0] <= cpu_data_sync[15:8];
-                REG_BLT_SRCX_HIGH: blt_srcx[15:8] <= cpu_data_sync[15:8];
-                REG_BLT_SRCY_LOW: blt_srcy[7:0] <= cpu_data_sync[15:8];
-                REG_BLT_SRCY_HIGH: blt_srcy[15:8] <= cpu_data_sync[15:8];
-                REG_VRAM_STRIDE_LOW: vram_stride[7:0] <= cpu_data_sync[15:8];
-                REG_VRAM_STRIDE_HIGH: vram_stride[10:8] <= cpu_data_sync[15:8];
-                REG_VIDEO_MODE: begin 
-                    video_mode <= cpu_data_sync[11:8];
-                    video_subMode <= cpu_data_sync[15:12];
-                end
-            endcase
+                case (cpu_addr_sync[7:0]) 
+                    REG_SCROLLY: scrolly <= cpu_data_sync[15:8];
+                    REG_SCROLLX: scrollx <= cpu_data_sync[15:8];
+                    REG_PAL_IDX: begin 
+                        reds[cpu_data_sync[15:8]] <= pal_r;
+                        greens[cpu_data_sync[15:8]] <= pal_g;
+                        blues[cpu_data_sync[15:8]] <= pal_b;
+                    end
+                    REG_PAL_R: pal_r <= cpu_data_sync[15:8];
+                    REG_PAL_G: pal_g <= cpu_data_sync[15:8];
+                    REG_PAL_B: pal_b <= cpu_data_sync[15:8];
+                    REG_SPR_XLOW: cursorX[7:0] <= cpu_data_sync[15:8];
+                    REG_SPR_XHIGH: cursorX[11:8] <= cpu_data_sync[11:8];
+                    REG_SPR_YLOW: cursorY[7:0] <= cpu_data_sync[15:8];
+                    REG_SPR_YHIGH: cursorY[11:8] <= cpu_data_sync[11:8];
+                    REG_SPR_IDX: spr_idx <= cpu_data_sync[15:8];
+                    REG_SPR_DATA: begin 
+                        if(spr_idx[0]) cursorSprite[spr_idx[7:1]][7:0] <= cpu_data_sync[15:8];
+                        else cursorSprite[spr_idx[7:1]][15:8] <= cpu_data_sync[15:8];
+                        spr_idx <= spr_idx + 8'd1;
+                    end
+                    REG_BLT_START: if (cpu_data_sync[15:8] == 8'h3a)  blitStart <= 1;
+                    REG_BLT_CMD: blt_cmd <= cpu_data_sync[15:8];
+                    REG_BLT_DESTX_LOW: blt_destx[7:0] <= cpu_data_sync[15:8];
+                    REG_BLT_DESTX_HIGH: blt_destx[15:8] <= cpu_data_sync[15:8];
+                    REG_BLT_DESTY_LOW: blt_desty[7:0] <= cpu_data_sync[15:8];
+                    REG_BLT_DESTY_HIGH: blt_desty[15:8] <= cpu_data_sync[15:8];
+                    REG_BLT_PAT_COL: blt_patt_col <= cpu_data_sync[15:8];
+                    REG_BLT_PATT_DATA: begin 
+                        blt_patt_idx <= blt_patt_idx + 1'b1;
+                        if (blt_patt_idx[0]) pattern[blt_patt_idx[7:1]][7:0] <= cpu_data_sync[15:8];
+                        else pattern[blt_patt_idx[7:1]][15:8] <= cpu_data_sync[15:8];
+                    end
+                    REG_BLT_PATT_IDX: blt_patt_idx <= cpu_data_sync[15:8];
+                    REG_BLT_WIDTH_LOW: blt_width[7:0] <= cpu_data_sync[15:8];
+                    REG_BLT_WIDTH_HIGH: blt_width[15:8] <= cpu_data_sync[15:8];
+                    REG_BLT_HEIGHT_LOW: blt_height[7:0] <= cpu_data_sync[15:8];
+                    REG_BLT_HEIGHT_HIGH: blt_height[15:8] <= cpu_data_sync[15:8];
+                    REG_BLT_PAT_BGCOL: blt_pat_bgcol <= cpu_data_sync[15:8];
+                    REG_BLT_PAT_MODE: blt_pat_mode <= cpu_data_sync[15:8];
+                    REG_BLT_SRCX_LOW: blt_srcx[7:0] <= cpu_data_sync[15:8];
+                    REG_BLT_SRCX_HIGH: blt_srcx[15:8] <= cpu_data_sync[15:8];
+                    REG_BLT_SRCY_LOW: blt_srcy[7:0] <= cpu_data_sync[15:8];
+                    REG_BLT_SRCY_HIGH: blt_srcy[15:8] <= cpu_data_sync[15:8];
+                    REG_VRAM_STRIDE_LOW: vram_stride[7:0] <= cpu_data_sync[15:8];
+                    REG_VRAM_STRIDE_HIGH: vram_stride[10:8] <= cpu_data_sync[15:8];
+                    REG_VIDEO_MODE: begin 
+                        video_mode <= cpu_data_sync[11:8];
+                        video_subMode <= cpu_data_sync[15:12];
+                    end
+                    REG_TEXTMODE_INDEX_LOW: textmode_index[7:0] <= cpu_data_sync[15:8];
+                    REG_TEXTMODE_INDEX_HIGH: textmode_index[12:8] <= cpu_data_sync[15:8];
+                    REG_TEXTMODE_DATA: begin 
+                        addrText <= textmode_index;
+                        textDataIn <= cpu_data_sync[15:8];
+                        textCea <= 1;
+                        textmode_index <= textmode_index +1;
+                    end
+                    REG_TEXTMODE_MODE: textmode_mode[1:0] <= cpu_data_sync[15:8];
+                endcase
         end
     end
 end
@@ -264,7 +275,12 @@ logic [10:0] vram_stride;
 localparam logic [7:0] REG_VIDEO_MODE = 8'h21;
 logic [3:0] video_mode;
 logic [3:0] video_subMode;
-
+localparam logic [7:0] REG_TEXTMODE_INDEX_LOW = 8'h22;
+localparam logic [7:0] REG_TEXTMODE_INDEX_HIGH = 8'h23;
+logic [12:0] textmode_index;
+localparam logic [7:0] REG_TEXTMODE_DATA = 8'h24;
+localparam logic [7:0] REG_TEXTMODE_MODE = 8'h25;
+logic [1:0] textmode_mode;
 
 
 
@@ -432,7 +448,40 @@ video_timing640 lowresMode(
     .line_fill_req(lineFillReq640),
     .line_fill_ack(fifo_line_fill_ack)
 ); 
+logic [7:0] font [1792] = '{8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'h40,8'he0,8'he0,8'h40,8'h40,8'h00,8'h40,8'h00,8'hd8,8'hd8,8'hd8,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'h50,8'hf8,8'h50,8'h50,8'hf8,8'h50,8'h00,8'h40,8'h70,8'h80,8'h60,8'h10,8'he0,8'h20,8'h00,8'hc8,8'hc8,8'h10,8'h20,8'h40,8'h98,8'h98,8'h00,8'h40,8'ha0,8'ha0,8'h40,8'ha8,8'h90,8'h68,8'h00,8'hc0,8'hc0,8'hc0,8'h00,8'h00,8'h00,8'h00,8'h00,8'h40,8'h80,8'h80,8'h80,8'h80,8'h80,8'h40,8'h00,8'h80,8'h40,8'h40,8'h40,8'h40,8'h40,8'h80,8'h00,8'h00,8'h50,8'h70,8'hf8,8'h70,8'h50,8'h00,8'h00,8'h00,8'h20,8'h20,8'hf8,8'h20,8'h20,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'hc0,8'hc0,8'h40,8'h00,8'h00,8'h00,8'hf8,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'hc0,8'hc0,8'h00,8'h00,8'h08,8'h10,8'h20,8'h40,8'h80,8'h00,8'h00,8'h70,8'h88,8'h98,8'ha8,8'hc8,8'h88,8'h70,8'h00,8'h40,8'hc0,8'h40,8'h40,8'h40,8'h40,8'he0,8'h00,8'h70,8'h88,8'h08,8'h30,8'h40,8'h80,8'hf8,8'h00,8'h70,8'h88,8'h08,8'h70,8'h08,8'h88,8'h70,8'h00,8'h10,8'h30,8'h50,8'h90,8'hf8,8'h10,8'h10,8'h00,8'hf8,8'h80,8'h80,8'hf0,8'h08,8'h88,8'h70,8'h00,8'h30,8'h40,8'h80,8'hf0,8'h88,8'h88,8'h70,8'h00,8'hf8,8'h08,8'h10,8'h20,8'h40,8'h40,8'h40,8'h00,8'h70,8'h88,8'h88,8'h70,8'h88,8'h88,8'h70,8'h00,8'h70,8'h88,8'h88,8'h78,8'h08,8'h10,8'h60,8'h00,8'h00,8'h00,8'hc0,8'hc0,8'h00,8'hc0,8'hc0,8'h00,8'h00,8'h00,8'hc0,8'hc0,8'h00,8'hc0,8'hc0,8'h80,8'h10,8'h20,8'h40,8'h80,8'h40,8'h20,8'h10,8'h00,8'h00,8'h00,8'hf8,8'h00,8'h00,8'hf8,8'h00,8'h00,8'h80,8'h40,8'h20,8'h10,8'h20,8'h40,8'h80,8'h00,8'h70,8'h88,8'h08,8'h30,8'h20,8'h00,8'h20,8'h00,8'h70,8'h88,8'hb8,8'ha8,8'hb8,8'h80,8'h70,8'h00,8'h70,8'h88,8'h88,8'h88,8'hf8,8'h88,8'h88,8'h00,8'hf0,8'h88,8'h88,8'hf0,8'h88,8'h88,8'hf0,8'h00,8'h70,8'h88,8'h80,8'h80,8'h80,8'h88,8'h70,8'h00,8'hf0,8'h88,8'h88,8'h88,8'h88,8'h88,8'hf0,8'h00,8'hf8,8'h80,8'h80,8'hf0,8'h80,8'h80,8'hf8,8'h00,8'hf8,8'h80,8'h80,8'hf0,8'h80,8'h80,8'h80,8'h00,8'h70,8'h88,8'h80,8'hb8,8'h88,8'h88,8'h78,8'h00,8'h88,8'h88,8'h88,8'hf8,8'h88,8'h88,8'h88,8'h00,8'he0,8'h40,8'h40,8'h40,8'h40,8'h40,8'he0,8'h00,8'h08,8'h08,8'h08,8'h08,8'h88,8'h88,8'h70,8'h00,8'h88,8'h90,8'ha0,8'hc0,8'ha0,8'h90,8'h88,8'h00,8'h80,8'h80,8'h80,8'h80,8'h80,8'h80,8'hf8,8'h00,8'h88,8'hd8,8'ha8,8'h88,8'h88,8'h88,8'h88,8'h00,8'h88,8'hc8,8'ha8,8'h98,8'h88,8'h88,8'h88,8'h00,8'h70,8'h88,8'h88,8'h88,8'h88,8'h88,8'h70,8'h00,8'hf0,8'h88,8'h88,8'hf0,8'h80,8'h80,8'h80,8'h00,8'h70,8'h88,8'h88,8'h88,8'ha8,8'h90,8'h68,8'h00,8'hf0,8'h88,8'h88,8'hf0,8'h90,8'h88,8'h88,8'h00,8'h70,8'h88,8'h80,8'h70,8'h08,8'h88,8'h70,8'h00,8'hf8,8'h20,8'h20,8'h20,8'h20,8'h20,8'h20,8'h00,8'h88,8'h88,8'h88,8'h88,8'h88,8'h88,8'h70,8'h00,8'h88,8'h88,8'h88,8'h88,8'h88,8'h50,8'h20,8'h00,8'ha8,8'ha8,8'ha8,8'ha8,8'ha8,8'ha8,8'h50,8'h00,8'h88,8'h88,8'h50,8'h20,8'h50,8'h88,8'h88,8'h00,8'h88,8'h88,8'h88,8'h50,8'h20,8'h20,8'h20,8'h00,8'hf0,8'h10,8'h20,8'h40,8'h80,8'h80,8'hf0,8'h00,8'he0,8'h80,8'h80,8'h80,8'h80,8'h80,8'he0,8'h00,8'h00,8'h80,8'h40,8'h20,8'h10,8'h08,8'h00,8'h00,8'he0,8'h20,8'h20,8'h20,8'h20,8'h20,8'he0,8'h00,8'h20,8'h50,8'h88,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'hf8,8'hc0,8'hc0,8'h40,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'h70,8'h08,8'h78,8'h88,8'h78,8'h00,8'h80,8'h80,8'hf0,8'h88,8'h88,8'h88,8'hf0,8'h00,8'h00,8'h00,8'h70,8'h88,8'h80,8'h88,8'h70,8'h00,8'h08,8'h08,8'h78,8'h88,8'h88,8'h88,8'h78,8'h00,8'h00,8'h00,8'h70,8'h88,8'hf0,8'h80,8'h70,8'h00,8'h30,8'h40,8'h40,8'hf0,8'h40,8'h40,8'h40,8'h00,8'h00,8'h00,8'h78,8'h88,8'h88,8'h78,8'h08,8'h70,8'h80,8'h80,8'he0,8'h90,8'h90,8'h90,8'h90,8'h00,8'h80,8'h00,8'h80,8'h80,8'h80,8'h80,8'hc0,8'h00,8'h10,8'h00,8'h30,8'h10,8'h10,8'h10,8'h90,8'h60,8'h80,8'h80,8'h90,8'ha0,8'hc0,8'ha0,8'h90,8'h00,8'h80,8'h80,8'h80,8'h80,8'h80,8'h80,8'hc0,8'h00,8'h00,8'h00,8'hd0,8'ha8,8'ha8,8'h88,8'h88,8'h00,8'h00,8'h00,8'he0,8'h90,8'h90,8'h90,8'h90,8'h00,8'h00,8'h00,8'h70,8'h88,8'h88,8'h88,8'h70,8'h00,8'h00,8'h00,8'hf0,8'h88,8'h88,8'h88,8'hf0,8'h80,8'h00,8'h00,8'h78,8'h88,8'h88,8'h88,8'h78,8'h08,8'h00,8'h00,8'hb0,8'h48,8'h40,8'h40,8'he0,8'h00,8'h00,8'h00,8'h70,8'h80,8'h70,8'h08,8'h70,8'h00,8'h40,8'h40,8'hf0,8'h40,8'h40,8'h50,8'h20,8'h00,8'h00,8'h00,8'h90,8'h90,8'h90,8'hb0,8'h50,8'h00,8'h00,8'h00,8'h88,8'h88,8'h88,8'h50,8'h20,8'h00,8'h00,8'h00,8'h88,8'h88,8'ha8,8'hf8,8'h50,8'h00,8'h00,8'h00,8'h90,8'h90,8'h60,8'h90,8'h90,8'h00,8'h00,8'h00,8'h90,8'h90,8'h90,8'h70,8'h20,8'hc0,8'h00,8'h00,8'hf0,8'h10,8'h60,8'h80,8'hf0,8'h00,8'h30,8'h40,8'h40,8'hc0,8'h40,8'h40,8'h30,8'h00,8'h80,8'h80,8'h80,8'h00,8'h80,8'h80,8'h80,8'h00,8'hc0,8'h20,8'h20,8'h30,8'h20,8'h20,8'hc0,8'h00,8'h50,8'ha0,8'h00,8'h00,8'h00,8'h00,8'h00,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00,8'hfc,8'h84,8'h84,8'h84,8'h84,8'h84,8'hfc,8'h00};
+wire [7:0] dataOutDPB;
+wire [10:0] sxplus1 = sx+1;
+wire [6:0] char_x =sxplus1[10:3];// 8; // 0..79
+wire [9:0] char_y = sy[9:3]; // 8; // 0..59
 
+wire [12:0] char_index = (char_y<<6) + (char_y<<4) + char_x;
+logic [7:0] textDataIn;
+logic textCea; 
+logic [12:0] addrText;
+Gowin_SDPB textBuffer(
+        .dout(dataOutDPB), //output [7:0] dout
+        .clka(sdram_clk), //input clka
+        .cea(textCea), //input cea
+        .reseta(~reset_n), //input reseta
+        .clkb(pix_clk), //input clkb
+        .ceb(1), //input ceb
+        .resetb(~reset_n), //input resetb
+        .oce(1), //input oce
+        .ada(addrText), //input [12:0] ada
+        .din(textDataIn), //input [7:0] din
+        .adb((char_index <4800) ? char_index : 0) //input [12:0] adb
+    );
+
+
+
+// fetch font pixel, blank if outside area
+wire fontPixelValid = (char_x < 80 && char_y < 60 && char_x > 0);
+wire fontPixelValidMode = (textmode_mode == 0) ? fontPixelValid :
+                          (textmode_mode == 1) ? fontPixelValid && (char_y) > 51 : 0;
+wire [7:0] char_code = fontPixelValidMode ? dataOutDPB : 8'd0;
+wire [10:0] font_row = ((char_code - 8'd32) << 3) + sy[2:0];
+wire fontPixel = fontPixelValidMode ? font[font_row][7-sx[2:0]] : 1'b0;
+//wire fontPixel = font[(8'h41-8'd32)*8 + sy[2:0]][8-sx[2:0]];
 wire cursorActive = (sx >= cursorX && sx<cursorX+12'd16) && (sy >= cursorY && sy<cursorY+12'd16); 
 wire [3:0] cx = sx - cursorX;   // 0..15
 wire [3:0] cy = sy - cursorY;   // 0..15
@@ -440,10 +489,17 @@ wire [3:0] cy = sy - cursorY;   // 0..15
 wire cursorPixel = cursorActive 
                    ? cursorSprite[cy][15 - cx] 
                    : 1'b0;
-wire [7:0] r = (cursorPixel) ? 8'h00 : reds[fifo_data_out];
-wire [7:0] g = (cursorPixel) ? 8'h00 : greens[fifo_data_out];
-wire [7:0] b = (cursorPixel) ? 8'h00 : blues[fifo_data_out];
+wire [7:0] bg_r = reds[fifo_data_out];
+wire [7:0] bg_g = greens[fifo_data_out];
+wire [7:0] bg_b = blues[fifo_data_out];
 
+wire [7:0] inv_r = ~bg_r;
+wire [7:0] inv_g = ~bg_g;
+wire [7:0] inv_b = ~bg_b;
+
+wire [7:0] r = cursorPixel ? 8'H20 : (fontPixel ? inv_r : bg_r);
+wire [7:0] g = cursorPixel ? 8'h10 : (fontPixel ? inv_g : bg_g);
+wire [7:0] b = cursorPixel ? 8'h10 : (fontPixel ? inv_b : bg_b);
 wire [7:0] I_rgb_r = (I_rgb_de) ? r : 0;
 wire [7:0] I_rgb_g = (I_rgb_de) ? g : 0;
 wire [7:0] I_rgb_b = (I_rgb_de) ? b : 0;
